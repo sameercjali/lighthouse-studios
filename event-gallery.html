@@ -1,0 +1,1014 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#050505">
+  <title>Event Gallery — The Light House Studios</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#050505;
+      --panel:#101010;
+      --text:#f5c400;
+      --muted:#999;
+      --gold:#999;
+      --line:#242424;
+    }
+
+    *{box-sizing:border-box}
+
+    html{scroll-behavior:smooth}
+
+    body{
+      margin:0;
+      background:var(--bg);
+      color:var(--text);
+      font-family:Poppins,Arial,sans-serif;
+      min-height:100vh;
+    }
+
+    a{color:inherit}
+
+    /* Slim cinematic header */
+    .topbar{
+      position:sticky;
+      top:0;
+      z-index:20;
+      height:58px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:0 3.2vw;
+      background:rgba(5,5,5,.95);
+      border-bottom:1px solid rgba(255,255,255,.08);
+      backdrop-filter:blur(12px);
+    }
+
+    .brand img{
+      width:54px;
+      height:auto;
+      display:block;
+    }
+
+    .back{
+      display:inline-flex;
+      align-items:center;
+      gap:7px;
+      color:#ddd;
+      text-decoration:none;
+      font-size:12px;
+      font-weight:600;
+      letter-spacing:.04em;
+      transition:color .25s ease;
+    }
+
+    .back:hover{color:var(--gold)}
+
+    .page{
+      width:min(1120px,90vw);
+      margin:0 auto;
+      padding:44px 0 60px;
+    }
+
+    /* Compact editorial heading */
+    .heading{
+      text-align:center;
+      margin:0 auto 30px;
+      max-width:850px;
+    }
+
+    .eyebrow{
+      color:var(--gold);
+      font-size:10px;
+      font-weight:600;
+      letter-spacing:.2em;
+      text-transform:uppercase;
+      margin:0 0 8px;
+    }
+
+    h1{
+      margin:0;
+      font-family:"Playfair Display",Georgia,serif;
+      font-size:clamp(34px,4.8vw,58px);
+      line-height:1.05;
+      font-weight:700;
+    }
+
+    .rule{
+      width:60px;
+      height:2px;
+      margin:14px auto 0;
+      background:var(--gold);
+    }
+
+    .description{
+      width:min(680px,100%);
+      margin:15px auto 0;
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.7;
+    }
+
+    /* Hero */
+    .hero{
+      background:var(--panel);
+      border:1px solid var(--line);
+      overflow:hidden;
+      margin-bottom:12px;
+    }
+
+    .hero img,
+    .hero video{
+      display:block;
+      width:100%;
+      aspect-ratio:16/9;
+      object-fit:cover;
+      background:#000;
+    }
+
+    /* Photography grid: varied rows, no oversized cards */
+    .gallery{
+      display:grid;
+      grid-template-columns:repeat(12,minmax(0,1fr));
+      grid-auto-flow:dense;
+      gap:10px;
+    }
+
+    .gallery-item{
+      grid-column:span 4;
+      background:var(--panel);
+      border:1px solid var(--line);
+      overflow:hidden;
+      min-width:0;
+    }
+
+    .gallery-item:nth-child(5n+1){grid-column:span 6}
+    .gallery-item:nth-child(5n+2){grid-column:span 6}
+    .gallery-item:nth-child(5n+3){grid-column:span 4}
+    .gallery-item:nth-child(5n+4){grid-column:span 4}
+    .gallery-item:nth-child(5n+5){grid-column:span 4}
+
+    .gallery-item img,
+    .gallery-item video{
+      display:block;
+      width:100%;
+      aspect-ratio:4/3;
+      object-fit:cover;
+      background:#000;
+      transition:transform .45s ease,filter .45s ease;
+    }
+
+    .gallery-item:hover img,
+    .gallery-item:hover video{
+      transform:scale(1.025);
+      filter:brightness(.88);
+    }
+
+    .empty,
+    .error{
+      text-align:center;
+      padding:52px 18px;
+      color:var(--muted);
+      background:var(--panel);
+      border:1px solid var(--line);
+    }
+
+    .error strong{
+      display:block;
+      color:#fff;
+      margin-bottom:6px;
+    }
+
+    .loading{
+      text-align:center;
+      color:var(--muted);
+      padding:55px 18px;
+    }
+
+    @media(max-width:800px){
+      .topbar{
+        height:54px;
+        padding:0 16px;
+      }
+
+      .brand img{width:48px}
+
+      .page{
+        width:min(92vw,700px);
+        padding:34px 0 45px;
+      }
+
+      .heading{margin-bottom:24px}
+
+      .description{
+        font-size:12px;
+        line-height:1.65;
+      }
+
+      .gallery{
+        grid-template-columns:repeat(2,minmax(0,1fr));
+        gap:8px;
+      }
+
+      .gallery-item,
+      .gallery-item:nth-child(n){
+        grid-column:span 1;
+      }
+
+      .gallery-item:nth-child(3n+1){
+        grid-column:span 2;
+      }
+    }
+
+    @media(max-width:480px){
+      .topbar{
+        height:50px;
+        padding:0 13px;
+      }
+
+      .brand img{width:44px}
+
+      .back{font-size:11px}
+
+      .page{
+        width:94vw;
+        padding:28px 0 38px;
+      }
+
+      .heading{margin-bottom:19px}
+
+      h1{font-size:31px}
+
+      .description{
+        font-size:11.5px;
+        margin-top:12px;
+      }
+
+      .gallery{
+        grid-template-columns:1fr;
+        gap:8px;
+      }
+
+      .gallery-item,
+      .gallery-item:nth-child(n){
+        grid-column:span 1;
+      }
+
+      .gallery-item:nth-child(3n+1){
+        grid-column:span 1;
+      }
+
+      .gallery-item img,
+      .gallery-item video{
+        aspect-ratio:16/10;
+      }
+
+      .hero{margin-bottom:8px}
+    }
+  </style>
+
+<style id="event-gallery-professional-refinement">
+/* ==========================================================
+   EVENT GALLERY — COMPACT PROFESSIONAL GRID + LIGHTBOX
+   ========================================================== */
+
+.page{
+  width:min(1040px,90vw);
+  margin:0 auto;
+  padding:28px 0 65px;
+}
+
+.heading{
+  margin:0 auto 22px;
+  max-width:860px;
+}
+
+.eyebrow{
+  font-size:9px;
+  letter-spacing:.24em;
+  margin-bottom:6px;
+}
+
+h1{
+  font-size:clamp(32px,4.2vw,52px);
+  line-height:1.05;
+}
+
+.rule{
+  width:52px;
+  height:2px;
+  margin:10px auto 0;
+}
+
+.description{
+  width:min(640px,100%);
+  margin:11px auto 0;
+  font-size:12px;
+  line-height:1.65;
+}
+
+/* Smaller hero */
+.hero{
+  width:min(820px,80vw);
+  margin:0 auto 18px;
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:10px;
+  background:#0b0b0b;
+  overflow:hidden;
+  box-shadow:0 16px 45px rgba(0,0,0,.32);
+  cursor:pointer;
+}
+
+.hero img,
+.hero video{
+  display:block;
+  width:100%;
+  aspect-ratio:16/9;
+  object-fit:cover;
+}
+
+/* Compact editorial gallery */
+.gallery{
+  width:min(940px,100%);
+  margin:0 auto;
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  grid-auto-flow:dense;
+  gap:9px;
+}
+
+.gallery-item{
+  position:relative;
+  grid-column:span 1 !important;
+  background:#0c0c0c;
+  border:1px solid rgba(255,255,255,.09);
+  border-radius:7px;
+  overflow:hidden;
+  min-width:0;
+  cursor:pointer;
+  box-shadow:0 5px 18px rgba(0,0,0,.20);
+  transition:transform .28s ease,border-color .28s ease;
+}
+
+/* A restrained editorial rhythm */
+.gallery-item:nth-child(7n+1),
+.gallery-item:nth-child(7n+2){
+  grid-column:span 2 !important;
+}
+
+.gallery-item img,
+.gallery-item video{
+  display:block;
+  width:100%;
+  aspect-ratio:4/3;
+  object-fit:cover;
+  background:#000;
+  transition:transform .45s cubic-bezier(.16,1,.3,1),filter .45s ease;
+}
+
+.gallery-item:nth-child(7n+1) img,
+.gallery-item:nth-child(7n+1) video,
+.gallery-item:nth-child(7n+2) img,
+.gallery-item:nth-child(7n+2) video{
+  aspect-ratio:16/9;
+}
+
+.gallery-item:hover{
+  transform:translateY(-2px);
+  border-color:rgba(245,196,0,.38);
+}
+
+.gallery-item:hover img,
+.gallery-item:hover video{
+  transform:scale(1.025);
+  filter:brightness(.9);
+}
+
+/* ==========================================================
+   LIGHTBOX
+   ========================================================== */
+
+.lh-lightbox{
+  position:fixed;
+  inset:0;
+  z-index:9999;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:54px 82px;
+  background:rgba(0,0,0,.94);
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+  transition:opacity .22s ease,visibility .22s ease;
+  backdrop-filter:blur(8px);
+}
+
+.lh-lightbox.open{
+  opacity:1;
+  visibility:visible;
+  pointer-events:auto;
+}
+
+.lh-lightbox-stage{
+  position:relative;
+  width:min(1100px,88vw);
+  height:min(78vh,760px);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.lh-lightbox-media{
+  max-width:100%;
+  max-height:100%;
+  width:auto;
+  height:auto;
+  object-fit:contain;
+  display:block;
+  border:1px solid rgba(255,255,255,.12);
+  box-shadow:0 20px 70px rgba(0,0,0,.65);
+}
+
+.lh-lightbox-close,
+.lh-lightbox-prev,
+.lh-lightbox-next{
+  position:fixed;
+  z-index:10001;
+  width:48px;
+  height:48px;
+  border:1px solid rgba(245,196,0,.65);
+  border-radius:50%;
+  background:rgba(8,8,8,.78);
+  color:#f5c400;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font:500 27px/1 Arial,sans-serif;
+  cursor:pointer;
+  transition:background .2s ease,color .2s ease,transform .2s ease;
+}
+
+.lh-lightbox-close{
+  top:18px;
+  right:22px;
+  font-size:25px;
+}
+
+.lh-lightbox-prev{
+  left:24px;
+  top:50%;
+  transform:translateY(-50%);
+}
+
+.lh-lightbox-next{
+  right:24px;
+  top:50%;
+  transform:translateY(-50%);
+}
+
+.lh-lightbox-close:hover,
+.lh-lightbox-prev:hover,
+.lh-lightbox-next:hover{
+  background:#f5c400;
+  color:#050505;
+}
+
+.lh-lightbox-prev:hover,
+.lh-lightbox-next:hover{
+  transform:translateY(-50%) scale(1.05);
+}
+
+.lh-lightbox-close:hover{
+  transform:scale(1.05);
+}
+
+.lh-lightbox-counter{
+  position:fixed;
+  left:50%;
+  bottom:18px;
+  transform:translateX(-50%);
+  z-index:10001;
+  color:#ddd;
+  font:500 11px/1 Poppins,Arial,sans-serif;
+  letter-spacing:.16em;
+}
+
+.lh-lightbox-caption{
+  position:fixed;
+  left:50%;
+  bottom:42px;
+  transform:translateX(-50%);
+  z-index:10001;
+  max-width:70vw;
+  color:#fff;
+  text-align:center;
+  font:500 12px/1.4 Poppins,Arial,sans-serif;
+}
+
+body.lh-lightbox-open{
+  overflow:hidden;
+}
+
+@media(max-width:800px){
+  .page{
+    width:92vw;
+    padding:24px 0 48px;
+  }
+
+  .hero{
+    width:94%;
+  }
+
+  .gallery{
+    width:100%;
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:7px;
+  }
+
+  .gallery-item:nth-child(7n+1),
+  .gallery-item:nth-child(7n+2){
+    grid-column:span 2 !important;
+  }
+
+  .lh-lightbox{
+    padding:50px 48px;
+  }
+
+  .lh-lightbox-stage{
+    width:92vw;
+    height:76vh;
+  }
+
+  .lh-lightbox-prev{
+    left:9px;
+  }
+
+  .lh-lightbox-next{
+    right:9px;
+  }
+
+  .lh-lightbox-close{
+    top:12px;
+    right:12px;
+  }
+}
+
+@media(max-width:480px){
+  .page{
+    width:94vw;
+    padding:20px 0 36px;
+  }
+
+  h1{
+    font-size:30px;
+  }
+
+  .hero{
+    width:100%;
+    border-radius:8px;
+  }
+
+  .gallery{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:6px;
+  }
+
+  .gallery-item:nth-child(7n+1),
+  .gallery-item:nth-child(7n+2){
+    grid-column:span 1 !important;
+  }
+
+  .gallery-item img,
+  .gallery-item video,
+  .gallery-item:nth-child(7n+1) img,
+  .gallery-item:nth-child(7n+1) video,
+  .gallery-item:nth-child(7n+2) img,
+  .gallery-item:nth-child(7n+2) video{
+    aspect-ratio:4/3;
+  }
+
+  .lh-lightbox{
+    padding:48px 34px 44px;
+  }
+
+  .lh-lightbox-stage{
+    width:94vw;
+    height:72vh;
+  }
+
+  .lh-lightbox-prev,
+  .lh-lightbox-next,
+  .lh-lightbox-close{
+    width:40px;
+    height:40px;
+  }
+
+  .lh-lightbox-prev{
+    left:4px;
+  }
+
+  .lh-lightbox-next{
+    right:4px;
+  }
+
+  .lh-lightbox-close{
+    top:8px;
+    right:8px;
+  }
+
+  .lh-lightbox-caption{
+    max-width:82vw;
+    bottom:38px;
+    font-size:11px;
+  }
+
+  .lh-lightbox-counter{
+    bottom:14px;
+  }
+}
+</style>
+
+<style id="main-image-smaller-centered">
+.hero{width:min(720px,72vw)!important;margin:0 auto 20px!important;border-radius:10px!important;}
+.hero img,.hero video{width:100%!important;aspect-ratio:16/9!important;object-fit:cover!important;}
+@media(max-width:800px){.hero{width:min(88vw,620px)!important;margin-left:auto!important;margin-right:auto!important;}}
+@media(max-width:480px){.hero{width:92vw!important;margin-left:auto!important;margin-right:auto!important;}}
+</style>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="index.html#portfolio" aria-label="Back to portfolio">
+      <img src="logo.png" alt="The Light House Studios">
+    </a>
+    <a class="back" href="index.html#portfolio">← Back to Portfolio</a>
+  </header>
+
+  <main class="page">
+    <section class="heading" id="eventHeader">
+      <div class="loading">Loading event...</div>
+    </section>
+    <section id="eventContent" aria-live="polite">
+      <div class="loading">Loading photos...</div>
+    </section>
+  </main>
+
+  <script type="module">
+    import { getCollection } from "./dynamic-content.js";
+
+    const eventHeader = document.getElementById("eventHeader");
+    const eventContent = document.getElementById("eventContent");
+    const eventId = new URLSearchParams(window.location.search).get("event");
+
+    function esc(value=""){
+      return String(value).replace(/&/g,"&amp;").replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;");
+    }
+
+    function mediaTypeOf(item){
+      return (item && item.mediaType) ||
+        (/\.mp4(?:$|[?#])/i.test(String(item && item.imageUrl || item || "")) ? "video" : "image");
+    }
+
+    function galleryOf(item){
+      if(Array.isArray(item.gallery)){
+        return item.gallery
+          .map(x => typeof x === "string" ? {imageUrl:x} : x)
+          .filter(x => x && x.imageUrl);
+      }
+      if(item.imageUrl) return [{imageUrl:item.imageUrl,title:item.title||""}];
+      return [];
+    }
+
+    function renderMedia(url,type,alt,hero=false){
+      if(type === "video"){
+        return `<video src="${esc(url)}" ${hero ? "controls " : ""}muted playsinline preload="metadata" aria-label="${esc(alt)}"></video>`;
+      }
+      return `<img src="${esc(url)}" alt="${esc(alt)}" loading="${hero ? "eager" : "lazy"}">`;
+    }
+
+    async function loadEvent(){
+      if(!eventId){
+        eventHeader.innerHTML = '<div class="error"><strong>Event not found</strong><span>No event was selected.</span></div>';
+        eventContent.innerHTML = "";
+        return;
+      }
+
+      try{
+        const items = await getCollection("portfolio");
+        const item = items.find(x => x.id === eventId);
+
+        if(!item){
+          eventHeader.innerHTML = '<div class="error"><strong>Event not found</strong><span>This portfolio event may have been removed.</span></div>';
+          eventContent.innerHTML = "";
+          return;
+        }
+
+        const mainUrl = item.mainImageUrl || item.imageUrl || "";
+        const mainType = item.mainMediaType ||
+          (/\.mp4(?:$|[?#])/i.test(mainUrl) ? "video" : "image");
+        const gallery = galleryOf(item);
+
+        document.title = `${item.title || "Event Gallery"} — The Light House Studios`;
+        eventHeader.innerHTML = `
+          <p class="eyebrow">${esc(item.category || "Portfolio")}</p>
+          <h1>${esc(item.title || "Untitled Event")}</h1>
+          <div class="rule"></div>
+          ${item.description ? `<p class="description">${esc(item.description)}</p>` : ""}
+        `;
+
+        let html = "";
+        if(mainUrl){
+          html += `<div class="hero">${renderMedia(mainUrl,mainType,`${item.title||"Event"} main media`,true)}</div>`;
+        }
+
+        if(gallery.length){
+          html += `<div class="gallery">${
+            gallery.map((photo,index) =>
+              `<div class="gallery-item">${renderMedia(photo.imageUrl,mediaTypeOf(photo),photo.title || `${item.title||"Event"} photo ${index+1}`)}</div>`
+            ).join("")
+          }</div>`;
+        } else if(!mainUrl){
+          html = '<div class="empty">No photos have been added to this event yet.</div>';
+        }
+
+        eventContent.innerHTML = html;
+      }catch(error){
+        console.error("Event gallery loading error:",error);
+        eventHeader.innerHTML = '<div class="error"><strong>Unable to load this event</strong><span>Please try again.</span></div>';
+        eventContent.innerHTML = "";
+      }
+    }
+
+    loadEvent();
+  </script>
+
+<style id="event-gallery-refinement">
+/* ===== REFINED EVENT GALLERY ===== */
+.page{
+  width:min(1080px,90vw);
+  padding:28px 0 70px;
+}
+
+.heading{
+  margin:0 auto 22px;
+  max-width:900px;
+}
+
+.eyebrow{
+  font-size:9px;
+  letter-spacing:.24em;
+  margin-bottom:6px;
+}
+
+h1{
+  font-size:clamp(32px,4.2vw,52px);
+  letter-spacing:.01em;
+}
+
+.rule{
+  width:52px;
+  margin:10px auto 0;
+}
+
+.description{
+  width:min(650px,100%);
+  margin:11px auto 0;
+  font-size:12px;
+  line-height:1.65;
+}
+
+/* Smaller, centered main event image/video */
+.hero{
+  width:min(860px,82vw);
+  margin:0 auto 20px;
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:12px;
+  background:#0b0b0b;
+  overflow:hidden;
+  box-shadow:0 20px 55px rgba(0,0,0,.38);
+}
+
+.hero img,
+.hero video{
+  display:block;
+  width:100%;
+  aspect-ratio:16/9;
+  object-fit:cover;
+}
+
+/* Cleaner gallery presentation */
+.gallery{
+  width:min(1000px,100%);
+  margin:0 auto;
+  gap:12px;
+}
+
+.gallery-item{
+  border-radius:9px;
+  border:1px solid rgba(255,255,255,.09);
+  box-shadow:0 8px 28px rgba(0,0,0,.22);
+  transition:transform .3s ease,border-color .3s ease;
+}
+
+.gallery-item:hover{
+  transform:translateY(-2px);
+  border-color:rgba(245,196,0,.35);
+}
+
+.gallery-item img,
+.gallery-item video{
+  transition:transform .5s cubic-bezier(.16,1,.3,1),filter .5s ease;
+}
+
+.empty,.error{
+  border-radius:10px;
+  border:1px solid rgba(255,255,255,.1);
+}
+
+@media(min-width:1400px){
+  .hero{
+    width:820px;
+  }
+}
+
+@media(max-width:800px){
+  .page{
+    width:min(92vw,700px);
+    padding:24px 0 48px;
+  }
+
+  .heading{
+    margin-bottom:19px;
+  }
+
+  .hero{
+    width:94%;
+    border-radius:9px;
+    margin-bottom:14px;
+  }
+
+  .gallery{
+    gap:8px;
+  }
+}
+
+@media(max-width:480px){
+  .page{
+    width:94vw;
+    padding:20px 0 36px;
+  }
+
+  h1{
+    font-size:30px;
+  }
+
+  .hero{
+    width:100%;
+    border-radius:8px;
+    margin-bottom:10px;
+  }
+
+  .description{
+    font-size:11.5px;
+  }
+}
+</style>
+
+
+<!-- Cinematic image/video lightbox -->
+<div class="lh-lightbox" id="lhLightbox" aria-hidden="true">
+  <button class="lh-lightbox-close" id="lhLightboxClose" type="button" aria-label="Close">×</button>
+  <button class="lh-lightbox-prev" id="lhLightboxPrev" type="button" aria-label="Previous image">‹</button>
+  <div class="lh-lightbox-stage" id="lhLightboxStage"></div>
+  <button class="lh-lightbox-next" id="lhLightboxNext" type="button" aria-label="Next image">›</button>
+  <div class="lh-lightbox-caption" id="lhLightboxCaption"></div>
+  <div class="lh-lightbox-counter" id="lhLightboxCounter"></div>
+</div>
+
+
+<script>
+(function(){
+  const box = document.getElementById("lhLightbox");
+  const stage = document.getElementById("lhLightboxStage");
+  const close = document.getElementById("lhLightboxClose");
+  const prev = document.getElementById("lhLightboxPrev");
+  const next = document.getElementById("lhLightboxNext");
+  const caption = document.getElementById("lhLightboxCaption");
+  const counter = document.getElementById("lhLightboxCounter");
+
+  let items = [];
+  let current = 0;
+
+  function collectItems(){
+    items = Array.from(document.querySelectorAll(
+      "#eventContent .hero img, #eventContent .hero video, #eventContent .gallery img, #eventContent .gallery video"
+    ));
+  }
+
+  function openAt(index){
+    collectItems();
+    if(!items.length) return;
+
+    current = (index + items.length) % items.length;
+    const source = items[current];
+
+    stage.innerHTML = "";
+
+    let media;
+    if(source.tagName.toLowerCase() === "video"){
+      media = document.createElement("video");
+      media.src = source.currentSrc || source.src;
+      media.controls = true;
+      media.playsInline = true;
+      media.preload = "metadata";
+    }else{
+      media = document.createElement("img");
+      media.src = source.currentSrc || source.src;
+      media.alt = source.alt || "";
+    }
+
+    media.className = "lh-lightbox-media";
+    stage.appendChild(media);
+
+    caption.textContent = source.alt || "";
+    counter.textContent = (current + 1) + " / " + items.length;
+
+    box.classList.add("open");
+    box.setAttribute("aria-hidden","false");
+    document.body.classList.add("lh-lightbox-open");
+  }
+
+  function closeBox(){
+    box.classList.remove("open");
+    box.setAttribute("aria-hidden","true");
+    document.body.classList.remove("lh-lightbox-open");
+    stage.innerHTML = "";
+  }
+
+  function move(step){
+    openAt(current + step);
+  }
+
+  document.addEventListener("click", function(e){
+    const media = e.target.closest(
+      "#eventContent .hero img, #eventContent .hero video, #eventContent .gallery img, #eventContent .gallery video"
+    );
+
+    if(media){
+      e.preventDefault();
+      collectItems();
+      openAt(items.indexOf(media));
+      return;
+    }
+
+    if(e.target === box){
+      closeBox();
+    }
+  });
+
+  close.addEventListener("click", closeBox);
+  prev.addEventListener("click", function(){ move(-1); });
+  next.addEventListener("click", function(){ move(1); });
+
+  document.addEventListener("keydown", function(e){
+    if(!box.classList.contains("open")) return;
+
+    if(e.key === "Escape"){
+      e.preventDefault();
+      closeBox();
+    }else if(e.key === "ArrowLeft"){
+      e.preventDefault();
+      move(-1);
+    }else if(e.key === "ArrowRight"){
+      e.preventDefault();
+      move(1);
+    }
+  });
+
+  /* Touch swipe */
+  let touchX = null;
+
+  box.addEventListener("touchstart", function(e){
+    if(e.touches.length === 1){
+      touchX = e.touches[0].clientX;
+    }
+  }, {passive:true});
+
+  box.addEventListener("touchend", function(e){
+    if(touchX === null || e.changedTouches.length !== 1) return;
+
+    const dx = e.changedTouches[0].clientX - touchX;
+    touchX = null;
+
+    if(Math.abs(dx) > 45){
+      move(dx < 0 ? 1 : -1);
+    }
+  }, {passive:true});
+})();
+</script>
+</body>
+</html>

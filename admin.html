@@ -1,0 +1,2830 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Studio Admin</title>
+
+  <style>
+    :root {
+      --bg: #0b0b0b;
+      --panel: #141414;
+      --panel2: #1b1b1b;
+      --line: #2a2a2a;
+      --text: #f5f5f5;
+      --muted: #999;
+      --gold: #d6ad55;
+      --danger: #e25d5d;
+      --success: #8ed7a5;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family:
+        Inter,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+    }
+
+    button,
+    input,
+    textarea,
+    select {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* =========================
+       LOGIN
+    ========================= */
+
+    .login {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+
+      background:
+        radial-gradient(
+          circle at 50% 20%,
+          #29200e 0,
+          #0b0b0b 45%
+        );
+    }
+
+    .login-card {
+      width: min(430px, 100%);
+      background: rgba(20, 20, 20, 0.96);
+      border: 1px solid var(--line);
+      padding: 34px;
+      border-radius: 22px;
+
+      box-shadow:
+        0 30px 100px rgba(0, 0, 0, 0.7);
+    }
+
+    .brand {
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--gold);
+      font-size: 12px;
+    }
+
+    .login h1 {
+      font-family: Georgia, serif;
+      font-size: 42px;
+      margin: 12px 0 8px;
+    }
+
+    .login p {
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    label {
+      display: block;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: #aaa;
+      margin: 18px 0 7px;
+    }
+
+    input,
+    textarea,
+    select {
+      width: 100%;
+      background: #0e0e0e;
+      color: #fff;
+
+      border: 1px solid var(--line);
+      border-radius: 10px;
+
+      padding: 12px;
+      outline: none;
+    }
+
+    textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    input:focus,
+    textarea:focus,
+    select:focus {
+      border-color: var(--gold);
+    }
+
+    .btn {
+      border: 0;
+      border-radius: 10px;
+
+      padding: 11px 15px;
+
+      background: var(--gold);
+      color: #111;
+
+      font-weight: 800;
+    }
+
+    .btn:hover {
+      filter: brightness(1.08);
+    }
+
+    .btn.secondary {
+      background: #252525;
+      color: #fff;
+    }
+
+    .btn.danger {
+      background: var(--danger);
+      color: #fff;
+    }
+
+    .btn.small {
+      padding: 8px 11px;
+      font-size: 12px;
+    }
+
+    .login .btn {
+      width: 100%;
+      margin-top: 20px;
+    }
+
+    .error {
+      color: #ff8b8b;
+      margin-top: 12px;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    /* =========================
+       ADMIN APP
+    ========================= */
+
+    .app {
+      display: grid;
+      grid-template-columns: 250px 1fr;
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      border-right: 1px solid var(--line);
+      background: #0f0f0f;
+
+      padding: 24px;
+
+      position: sticky;
+      top: 0;
+
+      height: 100vh;
+    }
+
+    .logo {
+      font-family: Georgia, serif;
+      font-size: 25px;
+      margin: 4px 0 30px;
+    }
+
+    .logo span {
+      color: var(--gold);
+    }
+
+    .navbtn {
+      width: 100%;
+      text-align: left;
+
+      background: transparent;
+      color: #bbb;
+
+      border: 0;
+
+      padding: 12px;
+      border-radius: 9px;
+
+      margin: 3px 0;
+    }
+
+    .navbtn.active,
+    .navbtn:hover {
+      background: #1d1d1d;
+      color: #fff;
+    }
+
+    .sidebar .logout {
+      position: absolute;
+      bottom: 24px;
+      left: 24px;
+      right: 24px;
+    }
+
+    .main {
+      padding: 30px;
+      max-width: 1500px;
+      width: 100%;
+      margin: auto;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      margin-bottom: 25px;
+    }
+
+    .topbar h1 {
+      font-family: Georgia, serif;
+      font-size: 38px;
+      margin: 0;
+    }
+
+    .user {
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    /* =========================
+       PANELS
+    ========================= */
+
+    .panel {
+      background: var(--panel);
+
+      border: 1px solid var(--line);
+      border-radius: 18px;
+
+      padding: 22px;
+      margin-bottom: 20px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+      gap: 18px;
+    }
+
+    .grid3 {
+      display: grid;
+      grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+
+      gap: 18px;
+    }
+
+    .actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .muted {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .status {
+      margin: 10px 0;
+      color: var(--success);
+      font-size: 13px;
+      min-height: 20px;
+    }
+
+    /* =========================
+       CARDS
+    ========================= */
+
+    .cards {
+      display: grid;
+
+      grid-template-columns:
+        repeat(
+          auto-fill,
+          minmax(240px, 1fr)
+        );
+
+      gap: 16px;
+    }
+
+    .card {
+      border: 1px solid var(--line);
+      background: #111;
+
+      border-radius: 14px;
+      overflow: hidden;
+    }
+
+    .card img {
+      width: 100%;
+      height: 170px;
+
+      object-fit: cover;
+      display: block;
+
+      background: #222;
+    }
+
+    .card-body {
+      padding: 13px;
+    }
+
+    .card h3 {
+      margin: 0 0 6px;
+      font-size: 16px;
+    }
+
+    .card p {
+      margin: 0 0 12px;
+
+      color: #999;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    /* =========================
+       DROP AREA
+    ========================= */
+
+    .drop {
+      border: 1px dashed #555;
+      border-radius: 14px;
+
+      padding: 25px;
+      text-align: center;
+
+      background: #101010;
+    }
+
+    .drop input {
+      display: none;
+    }
+
+    .drop label {
+      display: inline-block;
+
+      margin: 0;
+
+      text-transform: none;
+      letter-spacing: 0;
+
+      color: #fff;
+      background: #242424;
+
+      padding: 11px 15px;
+      border-radius: 9px;
+
+      cursor: pointer;
+    }
+
+    .drop label:hover {
+      background: #303030;
+    }
+
+    /* =========================
+       PREVIEW
+    ========================= */
+
+    .preview {
+      margin-top: 15px;
+    }
+
+    .preview img {
+      width: 180px;
+      height: 120px;
+
+      object-fit: cover;
+
+      border-radius: 10px;
+      border: 1px solid var(--line);
+    }
+
+    /* =========================
+       16:9 FOCAL / CROP SELECTOR
+    ========================= */
+    .crop-editor{margin-top:15px;padding:16px;border:1px solid var(--line);border-radius:14px;background:#101010}
+    .crop-frame{position:relative;width:100%;max-width:620px;aspect-ratio:16/9;margin:0 auto;overflow:hidden;border:1px solid #444;background:#050505}
+    .crop-frame img,.crop-frame video{width:100%;height:100%;object-fit:cover;display:block}
+    .crop-frame::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,transparent 49.8%,rgba(214,173,85,.5) 50%,transparent 50.2%),linear-gradient(0deg,transparent 49.8%,rgba(214,173,85,.5) 50%,transparent 50.2%)}
+    .crop-controls{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+    .crop-controls label{margin:0;text-transform:none;letter-spacing:0;color:#aaa}
+    .crop-controls input[type=range]{padding:0;accent-color:var(--gold)}
+    .crop-value{color:var(--gold);font-weight:700}
+    .crop-presets{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}
+    .crop-presets button{border:1px solid var(--line);background:#1b1b1b;color:#ddd;border-radius:8px;padding:7px 9px;font-size:11px}
+    .crop-presets button:hover{border-color:var(--gold);color:#fff}
+    @media(max-width:850px){.crop-controls{grid-template-columns:1fr}}
+
+    /* =========================
+       SECTION HEADER
+    ========================= */
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 15px;
+    }
+
+    .section-header h2 {
+      margin: 0;
+    }
+
+
+    /* =========================
+       EVENT PORTFOLIO EDITOR
+    ========================= */
+    .event-form-note{
+      border-left:3px solid var(--gold);
+      padding:10px 13px;
+      background:#19160f;
+      color:#bbb;
+      font-size:13px;
+      line-height:1.55;
+      margin:15px 0;
+    }
+    .divider{height:1px;background:var(--line);margin:22px 0}
+    .gallery-preview{
+      display:grid;
+      grid-template-columns:repeat(auto-fill,minmax(110px,1fr));
+      gap:10px;
+      margin-top:15px;
+    }
+    .gallery-preview-item{position:relative}
+    .gallery-preview img{
+      width:100%;height:85px;object-fit:cover;border-radius:8px;border:1px solid var(--line);display:block
+    }
+    .gallery-preview-item button{
+      position:absolute;top:4px;right:4px;width:25px;height:25px;border:0;border-radius:50%;background:rgba(0,0,0,.8);color:#fff
+    }
+    .card .thumbs{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin:10px 0 12px}
+    .card .thumbs img{height:55px;border-radius:5px}
+
+    /* =========================
+       RESPONSIVE
+    ========================= */
+
+    @media (max-width: 850px) {
+
+      .app {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        position: relative;
+        height: auto;
+
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .sidebar .logout {
+        position: static;
+        margin-top: 15px;
+      }
+
+      .grid,
+      .grid3 {
+        grid-template-columns: 1fr;
+      }
+
+      .main {
+        padding: 18px;
+      }
+
+      .topbar {
+        align-items: flex-start;
+        gap: 10px;
+        flex-direction: column;
+      }
+    }
+  
+
+/* =====================================================
+   ADMIN MOBILE OPTIMIZATION PATCH — 2026-09-08
+===================================================== */
+@media (max-width: 850px) {
+  html, body { overflow-x:hidden; }
+  .app { width:100%; grid-template-columns:1fr; }
+  .sidebar {
+    width:100%; padding:14px 12px 12px;
+    position:relative; height:auto;
+  }
+  .logo { font-size:20px; margin:2px 4px 12px; }
+  .sidebar .navbtn {
+    width:100%; margin:2px 0; padding:10px 8px;
+    font-size:12px; text-align:center;
+  }
+  .sidebar {
+    display:flex; flex-wrap:wrap; gap:4px;
+    align-items:center;
+  }
+  .sidebar .logo { flex:0 0 100%; }
+  .sidebar .navbtn { flex:1 1 calc(33.333% - 4px); }
+  .sidebar .logout { flex:1 1 100%; margin-top:7px; position:static; }
+  .main { width:100%; max-width:none; padding:14px 11px 30px; }
+  .topbar { margin-bottom:14px; }
+  .topbar h1 { font-size:28px; }
+  .panel { padding:15px; border-radius:14px; }
+  .grid, .grid3 { grid-template-columns:1fr; gap:12px; }
+  .cards { grid-template-columns:1fr; gap:12px; }
+  .card img { height:200px; }
+  .actions { width:100%; }
+  .actions .btn { flex:1 1 auto; min-height:42px; }
+  .drop { padding:18px 12px; }
+  .crop-editor { padding:11px; }
+  .crop-frame { width:100%; max-width:none; }
+  .crop-controls { grid-template-columns:1fr; gap:10px; }
+  .crop-presets { display:grid; grid-template-columns:repeat(3,1fr); gap:6px; }
+  .crop-presets button { min-height:38px; padding:6px 4px; }
+  input, textarea, select { font-size:16px; }
+  .gallery-preview { grid-template-columns:repeat(3,minmax(0,1fr)); gap:7px; }
+  .gallery-preview img, .gallery-preview video { width:100%; height:78px; object-fit:cover; }
+}
+
+@media (max-width: 480px) {
+  .sidebar .navbtn { flex-basis:calc(50% - 4px); }
+  .topbar h1 { font-size:25px; }
+  .user { max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .panel { padding:12px; }
+  .card img { height:180px; }
+  .gallery-preview { grid-template-columns:repeat(2,minmax(0,1fr)); }
+}
+
+</style>
+</head>
+
+
+<body>
+
+  <!-- =========================
+       LOGIN
+  ========================= -->
+
+  <div id="login" class="login">
+
+    <div class="login-card">
+
+      <div class="brand">
+        CREATIVE STUDIO
+      </div>
+
+      <h1>Admin</h1>
+
+      <p>
+        Private control panel for your portfolio website.
+      </p>
+
+      <label for="email">
+        Email
+      </label>
+
+      <input
+        id="email"
+        type="email"
+        placeholder="admin@email.com"
+        autocomplete="username"
+      >
+
+      <label for="password">
+        Password
+      </label>
+
+      <input
+        id="password"
+        type="password"
+        placeholder="••••••••"
+        autocomplete="current-password"
+      >
+
+      <button
+        class="btn"
+        id="loginBtn"
+        type="button"
+      >
+        Sign in
+      </button>
+
+      <div
+        id="loginError"
+        class="error"
+      ></div>
+
+    </div>
+
+  </div>
+
+
+  <!-- =========================
+       ADMIN APP
+  ========================= -->
+
+  <div id="app" class="app hidden">
+
+    <aside class="sidebar">
+
+      <div class="logo">
+        STUDIO<span>.</span>
+      </div>
+
+      <button
+        class="navbtn active"
+        data-tab="dashboard"
+      >
+        Dashboard
+      </button>
+
+      <button
+        class="navbtn"
+        data-tab="portfolio"
+      >
+        Portfolio
+      </button>
+
+      <button
+        class="navbtn"
+        data-tab="about"
+      >
+        About Us
+      </button>
+
+      <button
+        class="navbtn"
+        data-tab="services"
+      >
+        Services
+      </button>
+
+      <button
+        class="navbtn"
+        data-tab="clients"
+      >
+        Our Clients
+      </button>
+
+      <button
+        class="navbtn"
+        data-tab="settings"
+      >
+        Website Settings
+      </button>
+
+      <button
+        class="navbtn"
+        data-tab="media"
+      >
+        Media
+      </button>
+
+      <button
+        class="btn secondary logout"
+        id="logoutBtn"
+        type="button"
+      >
+        Sign out
+      </button>
+
+    </aside>
+
+
+    <main class="main">
+
+      <div class="topbar">
+
+        <h1 id="pageTitle">
+          Dashboard
+        </h1>
+
+        <div
+          class="user"
+          id="userEmail"
+        ></div>
+
+      </div>
+
+      <div id="contentArea"></div>
+
+    </main>
+
+  </div>
+
+
+  <!-- =========================
+       FIREBASE + CLOUDINARY
+  ========================= -->
+
+  <script type="module">
+
+    /* =========================
+       FIREBASE IMPORTS
+    ========================= */
+
+    import {
+      initializeApp
+    } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js";
+
+
+    import {
+      getAuth,
+      signInWithEmailAndPassword,
+      onAuthStateChanged,
+      signOut
+    } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js";
+
+
+    import {
+      getFirestore,
+      collection,
+      doc,
+      getDoc,
+      getDocs,
+      addDoc,
+      setDoc,
+      updateDoc,
+      deleteDoc,
+      serverTimestamp,
+      orderBy,
+      query
+    } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
+
+
+    /* =========================
+       INLINE PROJECT CONFIG
+       No local firebase-config.js required.
+    ========================= */
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBwgyxowI9pRCUL0kTObq5dmNxq3R0_N9I",
+      authDomain: "lighthouse-admin-c54b5.firebaseapp.com",
+      projectId: "lighthouse-admin-c54b5",
+      storageBucket: "lighthouse-admin-c54b5.firebasestorage.app",
+      messagingSenderId: "880621440582",
+      appId: "1:880621440582:web:796538aaeffd31b6d0c447",
+      measurementId: "G-DZN3LQ9CXF"
+    };
+
+    const CLOUDINARY_CLOUD_NAME = "wm4baarl";
+    const CLOUDINARY_UPLOAD_PRESET = "portfolio_upload";
+
+
+    /* =========================
+       INITIALIZE FIREBASE
+    ========================= */
+
+    const app =
+      initializeApp(firebaseConfig);
+
+    const auth =
+      getAuth(app);
+
+    const db =
+      getFirestore(app);
+
+
+    /* =========================
+       HELPERS
+    ========================= */
+
+    const $ = id =>
+      document.getElementById(id);
+
+
+    let currentTab = "dashboard";
+
+    let portfolioItems = [];
+
+    // Portfolio editor state
+    let editingEventId = null;
+    let selectedGalleryFiles = [];
+    let galleryToDelete = new Set();
+    let mainObjectPosition = "50% 50%";
+    let mainMediaType = "image";
+
+
+    /* =========================
+       LOGIN
+    ========================= */
+
+    $("loginBtn").addEventListener(
+      "click",
+      async () => {
+
+        $("loginError").textContent = "";
+
+        const email =
+          $("email").value.trim();
+
+        const password =
+          $("password").value;
+
+
+        if (!email || !password) {
+
+          $("loginError").textContent =
+            "Enter your email and password.";
+
+          return;
+        }
+
+
+        try {
+
+          $("loginBtn").disabled = true;
+
+          $("loginBtn").textContent =
+            "Signing in...";
+
+
+          await signInWithEmailAndPassword(
+            auth,
+            email,
+            password
+          );
+
+        }
+
+        catch (error) {
+
+          console.error(error);
+
+          $("loginError").textContent =
+            getFirebaseError(error);
+
+        }
+
+        finally {
+
+          $("loginBtn").disabled = false;
+
+          $("loginBtn").textContent =
+            "Sign in";
+
+        }
+
+      }
+    );
+
+
+    /* ENTER KEY LOGIN */
+
+    $("password").addEventListener(
+      "keydown",
+      event => {
+
+        if (event.key === "Enter") {
+
+          $("loginBtn").click();
+
+        }
+
+      }
+    );
+
+
+    /* FIREBASE ERROR CLEANUP */
+
+    function getFirebaseError(error) {
+
+      const code =
+        error?.code || "";
+
+
+      const messages = {
+
+        "auth/invalid-credential":
+          "Incorrect email or password.",
+
+        "auth/invalid-email":
+          "Please enter a valid email address.",
+
+        "auth/user-not-found":
+          "No account exists with this email.",
+
+        "auth/wrong-password":
+          "Incorrect password.",
+
+        "auth/too-many-requests":
+          "Too many attempts. Please wait and try again.",
+
+        "auth/network-request-failed":
+          "Network error. Check your internet connection."
+
+      };
+
+
+      return (
+        messages[code] ||
+        error?.message ||
+        "Unable to sign in."
+      );
+
+    }
+
+
+    /* =========================
+       LOGOUT
+    ========================= */
+
+    $("logoutBtn").addEventListener(
+      "click",
+      async () => {
+
+        await signOut(auth);
+
+      }
+    );
+
+
+    /* =========================
+       AUTH STATE
+    ========================= */
+
+    onAuthStateChanged(
+      auth,
+      async user => {
+
+        if (!user) {
+
+          $("login")
+            .classList
+            .remove("hidden");
+
+          $("app")
+            .classList
+            .add("hidden");
+
+          return;
+        }
+
+
+        try {
+
+          /*
+           * Check admin document.
+           *
+           * Firestore:
+           *
+           * admins
+           *   └── USER_UID
+           *          └── admin: true
+           */
+
+          const adminSnap =
+            await getDoc(
+              doc(
+                db,
+                "admins",
+                user.uid
+              )
+            );
+
+
+          if (
+            !adminSnap.exists() ||
+            adminSnap.data().admin !== true
+          ) {
+
+            await signOut(auth);
+
+            $("loginError").textContent =
+              "This account is not an administrator.";
+
+            return;
+          }
+
+
+          $("login")
+            .classList
+            .add("hidden");
+
+          $("app")
+            .classList
+            .remove("hidden");
+
+          $("userEmail").textContent =
+            user.email || "";
+
+
+          await render(currentTab);
+
+        }
+
+        catch (error) {
+
+          console.error(error);
+
+          $("loginError").textContent =
+            error.message;
+
+          await signOut(auth);
+
+        }
+
+      }
+    );
+
+
+    /* =========================
+       ADMIN NAVIGATION
+    ========================= */
+
+    document
+      .querySelectorAll(".navbtn")
+      .forEach(button => {
+
+        button.addEventListener(
+          "click",
+          async () => {
+
+            document
+              .querySelectorAll(".navbtn")
+              .forEach(x =>
+                x.classList.remove("active")
+              );
+
+
+            button.classList.add("active");
+
+
+            currentTab =
+              button.dataset.tab;
+
+
+            await render(currentTab);
+
+          }
+        );
+
+      });
+
+
+    /* =========================
+       HTML HELPERS
+    ========================= */
+
+    function shell(html) {
+
+      $("contentArea").innerHTML =
+        html;
+
+    }
+
+
+    function esc(value = "") {
+
+      return String(value)
+        .replace(
+          /[&<>"']/g,
+          character => {
+
+            const map = {
+
+              "&": "&amp;",
+              "<": "&lt;",
+              ">": "&gt;",
+              '"': "&quot;",
+              "'": "&#039;"
+
+            };
+
+            return map[character];
+
+          }
+        );
+
+    }
+
+
+    /* =========================
+       RENDER
+    ========================= */
+
+    async function render(tab) {
+
+      const titles = {
+
+        dashboard: "Dashboard",
+
+        portfolio: "Portfolio",
+
+        about: "About Us",
+
+        services: "Services",
+
+        clients: "Our Clients",
+
+        settings: "Website Settings",
+
+        media: "Media"
+
+      };
+
+
+      $("pageTitle").textContent =
+        titles[tab] || "Dashboard";
+
+
+      if (tab === "dashboard")
+        await dashboard();
+
+
+      if (tab === "portfolio")
+        await portfolio();
+
+
+      if (tab === "about")
+        await manageContent(
+          "blogs",
+          "About Us"
+        );
+
+
+      if (tab === "services")
+        await manageContent(
+          "filmmaking",
+          "Services"
+        );
+
+
+      if (tab === "clients")
+        await manageContent(
+          "startups",
+          "Our Clients"
+        );
+
+
+      if (tab === "settings")
+        await settings();
+
+
+      if (tab === "media")
+        await media();
+
+    }
+
+
+    /* =========================
+       DASHBOARD
+    ========================= */
+
+    async function dashboard() {
+
+      const [
+        portfolioSnap,
+        aboutSnap,
+        servicesSnap,
+        clientsSnap
+      ] = await Promise.all([
+
+        getDocs(
+          collection(
+            db,
+            "portfolio"
+          )
+        ),
+
+        getDocs(
+          collection(
+            db,
+            "blogs"
+          )
+        ),
+
+        getDocs(
+          collection(
+            db,
+            "filmmaking"
+          )
+        ),
+
+        getDocs(
+          collection(
+            db,
+            "startups"
+          )
+        )
+
+      ]);
+
+
+      shell(`
+
+        <div class="grid">
+
+          <div class="panel">
+
+            <div class="muted">
+              Portfolio Works
+            </div>
+
+            <h2>
+              ${portfolioSnap.size}
+            </h2>
+
+          </div>
+
+
+          <div class="panel">
+
+            <div class="muted">
+              About Us Entries
+            </div>
+
+            <h2>
+              ${aboutSnap.size}
+            </h2>
+
+          </div>
+
+
+          <div class="panel">
+
+            <div class="muted">
+              Services
+            </div>
+
+            <h2>
+              ${servicesSnap.size}
+            </h2>
+
+          </div>
+
+
+          <div class="panel">
+
+            <div class="muted">
+              Our Clients
+            </div>
+
+            <h2>
+              ${clientsSnap.size}
+            </h2>
+
+          </div>
+
+        </div>
+
+
+        <div class="panel">
+
+          <h2>
+            Website Management
+          </h2>
+
+          <p class="muted">
+
+            Manage your portfolio,
+            About Us content,
+            services,
+            clients,
+            website backgrounds
+            and website settings
+            from this dashboard.
+
+          </p>
+
+        </div>
+
+      `);
+
+    }
+
+
+    /* =========================
+       PORTFOLIO
+    ========================= */
+
+    async function portfolio() {
+
+      let snap;
+
+      try {
+        const portfolioQuery = query(
+          collection(db,"portfolio"),
+          orderBy("order","asc")
+        );
+        snap = await getDocs(portfolioQuery);
+      }
+      catch (error) {
+        console.warn("Ordered portfolio query failed:",error);
+        snap = await getDocs(collection(db,"portfolio"));
+      }
+
+      portfolioItems = snap.docs.map(document => ({
+        id: document.id,
+        ...document.data()
+      }));
+
+      shell(`
+        <div class="panel">
+          <h2>${editingEventId ? "Edit Portfolio Event" : "Add Portfolio Event"}</h2>
+
+          <div class="event-form-note">
+            Each event creates one section on portfolio.html:
+            <strong>event name on the left</strong>,
+            <strong>16:9 main image in the centre</strong>,
+            <strong>event description on the right</strong>,
+            followed by the event gallery.
+          </div>
+
+          <div class="grid">
+            <div>
+              <label>Event Name</label>
+              <input id="pTitle" placeholder="e.g. Ananya & Rahul Wedding">
+            </div>
+            <div>
+              <label>Category</label>
+              <input id="pCategory" placeholder="Photography / Wedding / Commercial">
+            </div>
+          </div>
+
+          <label>Event Description</label>
+          <textarea id="pDesc" placeholder="Write the description shown on the right side of the main image."></textarea>
+
+          <div class="grid">
+            <div>
+              <label>Main Event Media — 16:9</label>
+              <div class="drop">
+                <label for="pMainFile">Choose Main Image / Video</label>
+                <input id="pMainFile" type="file" accept="image/jpeg,image/png,image/webp,video/mp4">
+                <div id="mainFileName" class="muted">JPG, PNG, WEBP or MP4</div>
+                <div id="mainPreview" class="preview"></div>
+              </div>
+              <div id="cropEditorArea"></div>
+            </div>
+
+            <div>
+              <label>Event Gallery Media</label>
+              <div class="drop">
+                <label for="pGalleryFiles">Choose Multiple Images / Videos</label>
+                <input id="pGalleryFiles" type="file" multiple accept="image/jpeg,image/png,image/webp,video/mp4">
+                <div id="galleryFileName" class="muted">Select multiple JPG, PNG, WEBP or MP4 files</div>
+                <div id="galleryPreview" class="gallery-preview"></div>
+              </div>
+            </div>
+          </div>
+
+          <div id="editGalleryArea"></div>
+
+          <div class="actions" style="margin-top:15px">
+            <button class="btn" id="saveEventBtn" type="button">
+              ${editingEventId ? "Save Event Changes" : "Publish Event"}
+            </button>
+            ${editingEventId ? `<button class="btn secondary" id="cancelEditBtn" type="button">Cancel Edit</button>` : ""}
+          </div>
+
+          <div id="uploadStatus" class="status"></div>
+        </div>
+
+        <div class="panel">
+          <div class="section-header">
+            <h2>Published Portfolio Events</h2>
+            <span class="muted">${portfolioItems.length} events</span>
+          </div>
+
+          <div class="cards">
+            ${portfolioItems.length ? portfolioItems.map(item => {
+              const main = item.mainImageUrl || item.imageUrl || "";
+              const gallery = normalizePortfolioGallery(item);
+              return `
+                <article class="card">
+                  ${main ? (item.mainMediaType === "video" ? `<video src="${esc(main)}" muted playsinline controls style="width:100%;height:170px;object-fit:cover;display:block;background:#222"></video>` : `<img src="${esc(main)}" alt="${esc(item.title || "Portfolio event")}" loading="lazy" style="object-position:${esc(normalizeObjectPosition(item.mainObjectPosition))}">`) : `<div style="height:170px;display:grid;place-items:center;color:#666">No main media</div>`}
+                  <div class="card-body">
+                    <h3>${esc(item.title || "Untitled Event")}</h3>
+                    <p>${esc(item.description || "")}</p>
+                    ${gallery.length ? `<div class="thumbs">${gallery.slice(0,4).map(photo => photo.mediaType === "video" ? `<video src="${esc(photo.imageUrl)}" muted playsinline style="width:100%;height:55px;object-fit:cover;border-radius:5px"></video>` : `<img src="${esc(photo.imageUrl)}" alt="Gallery image" loading="lazy">`).join("")}</div>` : ""}
+                    <div class="actions">
+                      <button class="btn secondary small" data-event-edit="${esc(item.id)}" type="button">Edit Event</button>
+                      <button class="btn danger small" data-event-delete="${esc(item.id)}" type="button">Delete Event</button>
+                    </div>
+                  </div>
+                </article>
+              `;
+            }).join("") : `<p class="muted">No portfolio events yet.</p>`}
+          </div>
+        </div>
+      `);
+
+      setupPortfolioForm();
+
+      if (editingEventId) {
+        const item = portfolioItems.find(x => x.id === editingEventId);
+        if (item) {
+          $("pTitle").value = item.title || "";
+          $("pCategory").value = item.category || "";
+          $("pDesc").value = item.description || "";
+          renderExistingGallery(item);
+          if (item.mainImageUrl || item.imageUrl) {
+            mainMediaType = inferMediaType(item.mainMediaType, item.mainImageUrl || item.imageUrl);
+            mainObjectPosition = normalizeObjectPosition(item.mainObjectPosition);
+            renderMainMediaPreview(item.mainImageUrl || item.imageUrl, mainMediaType, mainObjectPosition, true);
+            $("mainFileName").textContent = `Current main ${mainMediaType === "video" ? "video" : "image"} — choose a new file to replace it`;
+            if (mainMediaType === "image") renderCropEditor(item.mainImageUrl || item.imageUrl, mainObjectPosition);
+          }
+        }
+      }
+
+      document.querySelectorAll("[data-event-edit]").forEach(button => {
+        button.addEventListener("click",async () => {
+          editingEventId = button.dataset.eventEdit;
+          selectedGalleryFiles = [];
+          galleryToDelete.clear();
+          await portfolio();
+          window.scrollTo({top:0,behavior:"smooth"});
+        });
+      });
+
+      document.querySelectorAll("[data-event-delete]").forEach(button => {
+        button.addEventListener("click",() => deletePortfolioEvent(button.dataset.eventDelete));
+      });
+    }
+
+    function normalizePortfolioGallery(item) {
+      if (Array.isArray(item.gallery)) {
+        return item.gallery
+          .map(x => typeof x === "string" ? {imageUrl:x} : x)
+          .filter(x => x && x.imageUrl);
+      }
+      if (item.imageUrl) return [{imageUrl:item.imageUrl,title:item.title || ""}];
+      return [];
+    }
+
+    function setupPortfolioForm() {
+      $("pMainFile").addEventListener("change",event => {
+        const file = event.target.files[0];
+        mainMediaType = file?.type === "video/mp4" ? "video" : "image";
+        mainObjectPosition = "50% 50%";
+        $("mainFileName").textContent = file?.name || "JPG, PNG, WEBP or MP4";
+        $("mainPreview").innerHTML = "";
+        $("cropEditorArea").innerHTML = "";
+        if (file) {
+          const url = URL.createObjectURL(file);
+          renderMainMediaPreview(url, mainMediaType, mainObjectPosition, false);
+          if (mainMediaType === "image") renderCropEditor(url, mainObjectPosition);
+        }
+      });
+
+      $("pGalleryFiles").addEventListener("change",event => {
+        selectedGalleryFiles = Array.from(event.target.files || []);
+        $("galleryFileName").textContent = selectedGalleryFiles.length
+          ? `${selectedGalleryFiles.length} media file(s) selected`
+          : "Select multiple JPG, PNG, WEBP or MP4 files";
+        renderNewGalleryPreview();
+      });
+
+      $("saveEventBtn").addEventListener("click",savePortfolioEvent);
+
+      if ($("cancelEditBtn")) {
+        $("cancelEditBtn").addEventListener("click",async () => {
+          editingEventId = null;
+          selectedGalleryFiles = [];
+          galleryToDelete.clear();
+          await portfolio();
+        });
+      }
+    }
+
+    function renderNewGalleryPreview() {
+      const area = $("galleryPreview");
+      area.innerHTML = "";
+      selectedGalleryFiles.forEach((file,index) => {
+        const url = URL.createObjectURL(file);
+        const item = document.createElement("div");
+        item.className = "gallery-preview-item";
+        const isVideo = file.type === "video/mp4";
+        item.innerHTML = `${isVideo ? `<video src="${url}" muted playsinline controls style="width:100%;height:85px;object-fit:cover;border-radius:8px;border:1px solid var(--line);display:block"></video>` : `<img src="${url}" alt="New gallery image ${index + 1}">`}<button type="button" aria-label="Remove media">&times;</button>`;
+        item.querySelector("button").addEventListener("click",() => {
+          selectedGalleryFiles.splice(index,1);
+          renderNewGalleryPreview();
+          $("galleryFileName").textContent = selectedGalleryFiles.length
+            ? `${selectedGalleryFiles.length} media file(s) selected`
+            : "Select multiple JPG, PNG, WEBP or MP4 files";
+        });
+        area.appendChild(item);
+      });
+    }
+
+    function renderExistingGallery(item) {
+      const gallery = normalizePortfolioGallery(item);
+      $("editGalleryArea").innerHTML = `
+        <div class="divider"></div>
+        <label>Existing Event Gallery</label>
+        ${gallery.length ? `
+          <div class="gallery-preview" id="existingGalleryPreview">
+            ${gallery.map((photo,index) => `
+              <div class="gallery-preview-item" data-existing-gallery="${index}">
+                ${inferMediaType(photo.mediaType,photo.imageUrl) === "video" ? `<video src="${esc(photo.imageUrl)}" muted playsinline controls style="width:100%;height:85px;object-fit:cover;border-radius:8px;border:1px solid var(--line);display:block"></video>` : `<img src="${esc(photo.imageUrl)}" alt="Existing gallery image">`}
+                <button type="button" aria-label="Remove this gallery media" data-remove-gallery="${index}">&times;</button>
+              </div>
+            `).join("")}
+          </div>
+          <p class="muted" style="margin-top:10px">Click × to remove an existing image. The removal is saved when you save the event.</p>
+        ` : `<p class="muted">No existing gallery images.</p>`}
+      `;
+
+      document.querySelectorAll("[data-remove-gallery]").forEach(button => {
+        button.addEventListener("click",() => {
+          const index = Number(button.dataset.removeGallery);
+          galleryToDelete.add(index);
+          button.closest(".gallery-preview-item").remove();
+        });
+      });
+    }
+
+    async function uploadPortfolioMedia(file) {
+      if (!file) return null;
+      const isVideo = file.type === "video/mp4";
+      const allowedTypes = ["image/jpeg","image/png","image/webp","video/mp4"];
+      if (!allowedTypes.includes(file.type)) throw new Error("Only JPG, PNG, WEBP and MP4 files are allowed.");
+      const maxSize = isVideo ? 100 * 1024 * 1024 : 15 * 1024 * 1024;
+      if (file.size > maxSize) throw new Error(`${isVideo ? "MP4 video" : "Image"} must be smaller than ${isVideo ? "100 MB" : "15 MB"}.`);
+
+      const formData = new FormData();
+      formData.append("file",file);
+      formData.append("upload_preset",CLOUDINARY_UPLOAD_PRESET);
+
+      const resourceType = isVideo ? "video" : "image";
+      const uploadUrl = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/${resourceType}/upload`;
+      const response = await fetch(uploadUrl,{method:"POST",body:formData});
+      const result = await response.json();
+      if (!response.ok) throw new Error(result?.error?.message || "Cloudinary upload failed.");
+
+      return {
+        imageUrl:result.secure_url,
+        cloudinaryPublicId:result.public_id || "",
+        mediaType:isVideo ? "video" : "image"
+      };
+    }
+
+    function inferMediaType(value, url="") {
+      if (value === "video" || value === "image") return value;
+      return /\.mp4(?:[?#]|$)/i.test(String(url)) ? "video" : "image";
+    }
+
+    function normalizeObjectPosition(value) {
+      const match = String(value || "50% 50%").match(/^(\d{1,3})%\s+(\d{1,3})%$/);
+      if (!match) return "50% 50%";
+      return `${Math.min(100,Number(match[1]))}% ${Math.min(100,Number(match[2]))}%`;
+    }
+
+    function renderMainMediaPreview(url, mediaType="image", objectPosition="50% 50%", current=false) {
+      const area = $("mainPreview");
+      if (!area || !url) return;
+      const safePosition = normalizeObjectPosition(objectPosition);
+      area.innerHTML = mediaType === "video"
+        ? `<video src="${esc(url)}" ${current ? "" : "controls"} muted playsinline style="width:280px;max-width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:10px;border:1px solid var(--line);display:block"></video>`
+        : `<img src="${esc(url)}" alt="Main image preview" style="width:280px;max-width:100%;aspect-ratio:16/9;object-fit:cover;object-position:${safePosition};border-radius:10px;border:1px solid var(--line);display:block">`;
+    }
+
+    function renderCropEditor(url, position="50% 50%") {
+      const area = $("cropEditorArea");
+      if (!area || !url) return;
+      const safe = normalizeObjectPosition(position);
+      const [x,y] = safe.replace(/%/g,"").split(/\s+/).map(Number);
+      area.innerHTML = `
+        <div class="crop-editor">
+          <div class="muted" style="margin-bottom:10px"><strong style="color:#fff">16:9 crop selector</strong> — choose exactly which part of the image is visible on the website. Dragging is not required; use the focal controls below.</div>
+          <div class="crop-frame"><img id="cropImage" src="${esc(url)}" alt="16:9 crop preview" style="object-position:${x}% ${y}%"></div>
+          <div class="crop-controls">
+            <label>Horizontal focus <span id="cropXValue" class="crop-value">${x}%</span><input id="cropX" type="range" min="0" max="100" step="1" value="${x}"></label>
+            <label>Vertical focus <span id="cropYValue" class="crop-value">${y}%</span><input id="cropY" type="range" min="0" max="100" step="1" value="${y}"></label>
+          </div>
+          <div class="crop-presets">
+            <button type="button" data-crop="0 0">Top Left</button><button type="button" data-crop="50 0">Top</button><button type="button" data-crop="100 0">Top Right</button>
+            <button type="button" data-crop="0 50">Left</button><button type="button" data-crop="50 50">Center</button><button type="button" data-crop="100 50">Right</button>
+            <button type="button" data-crop="0 100">Bottom Left</button><button type="button" data-crop="50 100">Bottom</button><button type="button" data-crop="100 100">Bottom Right</button>
+          </div>
+        </div>`;
+
+      const update = () => {
+        const xx = Number($("cropX").value);
+        const yy = Number($("cropY").value);
+        mainObjectPosition = `${xx}% ${yy}%`;
+        $("cropImage").style.objectPosition = mainObjectPosition;
+        $("cropXValue").textContent = `${xx}%`;
+        $("cropYValue").textContent = `${yy}%`;
+        renderMainMediaPreview(url,"image",mainObjectPosition,false);
+      };
+      $("cropX").addEventListener("input",update);
+      $("cropY").addEventListener("input",update);
+      area.querySelectorAll("[data-crop]").forEach(btn => btn.addEventListener("click",()=>{
+        const [xx,yy] = btn.dataset.crop.split(" ").map(Number);
+        $("cropX").value=xx; $("cropY").value=yy; update();
+      }));
+    }
+
+    async function savePortfolioEvent() {
+      const title = $("pTitle").value.trim() || "Untitled Event";
+      const category = $("pCategory").value.trim() || "Photography";
+      const description = $("pDesc").value.trim();
+      const mainFile = $("pMainFile").files[0];
+
+      $("saveEventBtn").disabled = true;
+      $("saveEventBtn").textContent = editingEventId ? "Saving..." : "Publishing...";
+      $("uploadStatus").textContent = "Preparing event...";
+
+      try {
+        let existing = editingEventId ? portfolioItems.find(x => x.id === editingEventId) : null;
+        if (editingEventId && !existing) throw new Error("The event could not be found.");
+
+        let mainImageUrl = existing?.mainImageUrl || existing?.imageUrl || "";
+        let mainCloudinaryPublicId = existing?.mainCloudinaryPublicId || existing?.cloudinaryPublicId || "";
+
+        if (mainFile) {
+          $("uploadStatus").textContent = "Uploading main event image...";
+          const uploadedMain = await uploadPortfolioMedia(mainFile);
+          mainImageUrl = uploadedMain.imageUrl;
+          mainCloudinaryPublicId = uploadedMain.cloudinaryPublicId;
+          mainMediaType = uploadedMain.mediaType;
+          if (mainMediaType === "image") renderCropEditor(mainImageUrl, mainObjectPosition);
+        }
+
+        if (!mainImageUrl) throw new Error("Choose a main event image.");
+
+        let existingGallery = normalizePortfolioGallery(existing || {});
+        if (editingEventId && galleryToDelete.size) {
+          existingGallery = existingGallery.filter((_,index) => !galleryToDelete.has(index));
+        }
+
+        const newGallery = [];
+        for (let i=0;i<selectedGalleryFiles.length;i++) {
+          $("uploadStatus").textContent = `Uploading gallery image ${i+1} of ${selectedGalleryFiles.length}...`;
+          const uploaded = await uploadPortfolioMedia(selectedGalleryFiles[i]);
+          newGallery.push({imageUrl:uploaded.imageUrl,cloudinaryPublicId:uploaded.cloudinaryPublicId,mediaType:uploaded.mediaType,createdAt:Date.now()});
+        }
+
+        const payload = {
+          title,
+          category,
+          description,
+          mainImageUrl,
+          mainCloudinaryPublicId,
+          gallery:[...existingGallery,...newGallery],
+          mainMediaType: mainMediaType,
+          mainObjectPosition: mainMediaType === "image" ? normalizeObjectPosition(mainObjectPosition) : "50% 50%",
+          updatedAt:serverTimestamp()
+        };
+
+        if (!editingEventId) {
+          payload.order = Date.now();
+          payload.createdAt = serverTimestamp();
+          await addDoc(collection(db,"portfolio"),payload);
+        } else {
+          await updateDoc(doc(db,"portfolio",editingEventId),payload);
+        }
+
+        editingEventId = null;
+        selectedGalleryFiles = [];
+        galleryToDelete.clear();
+        mainObjectPosition = "50% 50%";
+        mainMediaType = "image";
+        await portfolio();
+      }
+      catch (error) {
+        console.error("Portfolio event save error:",error);
+        $("uploadStatus").textContent = "Save failed: " + error.message;
+        $("saveEventBtn").disabled = false;
+        $("saveEventBtn").textContent = editingEventId ? "Save Event Changes" : "Publish Event";
+      }
+    }
+
+    async function deletePortfolioEvent(id) {
+      const item = portfolioItems.find(x => x.id === id);
+      if (!item) return;
+
+      if (!confirm(`Delete the event "${item.title || "Untitled Event"}"?\n\nThis removes the Firestore event record. Cloudinary files are not deleted from the browser.`)) return;
+
+      try {
+        await deleteDoc(doc(db,"portfolio",id));
+        if (editingEventId === id) editingEventId = null;
+        await portfolio();
+      } catch (error) {
+        console.error(error);
+        alert("Delete failed: " + error.message);
+      }
+    }
+
+    /* =========================
+       ABOUT / SERVICES / CLIENTS
+    ========================= */
+
+    async function manageContent(
+      collectionName,
+      displayName
+    ) {
+
+      const snap =
+        await getDocs(
+          collection(
+            db,
+            collectionName
+          )
+        );
+
+
+      const items =
+        snap.docs.map(
+          document => ({
+            id: document.id,
+            ...document.data()
+          })
+        );
+
+
+      shell(`
+
+        <div class="panel">
+
+          <h2>
+            Manage ${esc(displayName)}
+          </h2>
+
+          <p class="muted">
+
+            Add, edit or remove content
+            shown in the
+            ${esc(displayName)}
+            section of your website.
+
+          </p>
+
+        </div>
+
+
+        <div class="panel">
+
+          <h3>
+            Add ${esc(displayName)}
+          </h3>
+
+
+          <label>
+            Title
+          </label>
+
+          <input
+            id="contentTitle"
+            placeholder="Enter title"
+          >
+
+
+          <label>
+            Description
+          </label>
+
+          <textarea
+            id="contentDescription"
+            placeholder="Enter description"
+          ></textarea>
+
+
+          <label>
+            Image URL
+          </label>
+
+          <input
+            id="contentImage"
+            placeholder="Cloudinary image URL"
+          >
+
+
+          <div
+            class="actions"
+            style="margin-top:15px"
+          >
+
+            <button
+              class="btn"
+              id="addContentBtn"
+              type="button"
+            >
+              Add Content
+            </button>
+
+          </div>
+
+
+          <div
+            id="contentStatus"
+            class="status"
+          ></div>
+
+        </div>
+
+
+        <div class="panel">
+
+          <div class="section-header">
+
+            <h2>
+              Published ${esc(displayName)}
+            </h2>
+
+            <span class="muted">
+              ${items.length}
+              items
+            </span>
+
+          </div>
+
+
+          <div class="cards">
+
+            ${
+              items.length
+
+                ? items.map(item => `
+
+                    <article class="card">
+
+                      ${
+                        item.imageUrl
+                          ? `
+
+                            <img
+                              src="${esc(item.imageUrl)}"
+                              alt="${esc(
+                                item.title ||
+                                displayName
+                              )}"
+                              loading="lazy"
+                            >
+
+                          `
+                          : ""
+                      }
+
+
+                      <div class="card-body">
+
+                        <h3>
+                          ${esc(
+                            item.title ||
+                            "Untitled"
+                          )}
+                        </h3>
+
+
+                        <p>
+                          ${esc(
+                            item.description ||
+                            ""
+                          )}
+                        </p>
+
+
+                        <div class="actions">
+
+                          <button
+                            class="btn secondary small"
+                            data-content-edit="${esc(item.id)}"
+                            type="button"
+                          >
+                            Edit
+                          </button>
+
+
+                          <button
+                            class="btn danger small"
+                            data-content-delete="${esc(item.id)}"
+                            type="button"
+                          >
+                            Delete
+                          </button>
+
+                        </div>
+
+                      </div>
+
+                    </article>
+
+                  `).join("")
+
+                : `
+
+                    <p class="muted">
+                      No ${esc(displayName)}
+                      content yet.
+                    </p>
+
+                  `
+            }
+
+          </div>
+
+        </div>
+
+      `);
+
+
+      /* =========================
+         ADD CONTENT
+      ========================= */
+
+      $("addContentBtn")
+        .addEventListener(
+          "click",
+          async () => {
+
+            const title =
+              $("contentTitle")
+                .value
+                .trim();
+
+
+            const description =
+              $("contentDescription")
+                .value
+                .trim();
+
+
+            const imageUrl =
+              $("contentImage")
+                .value
+                .trim();
+
+
+            if (!title) {
+
+              $("contentStatus")
+                .textContent =
+                "Please enter a title.";
+
+              return;
+
+            }
+
+
+            try {
+
+              await addDoc(
+                collection(
+                  db,
+                  collectionName
+                ),
+                {
+
+                  title,
+
+                  description,
+
+                  imageUrl,
+
+                  createdAt:
+                    serverTimestamp()
+
+                }
+              );
+
+
+              await manageContent(
+                collectionName,
+                displayName
+              );
+
+            }
+
+            catch (error) {
+
+              console.error(error);
+
+              $("contentStatus")
+                .textContent =
+                "Could not add content: " +
+                error.message;
+
+            }
+
+          }
+        );
+
+
+      /* =========================
+         EDIT CONTENT
+      ========================= */
+
+      document
+        .querySelectorAll(
+          "[data-content-edit]"
+        )
+        .forEach(button => {
+
+          button.addEventListener(
+            "click",
+            async () => {
+
+              const id =
+                button.dataset
+                  .contentEdit;
+
+
+              const item =
+                items.find(
+                  x => x.id === id
+                );
+
+
+              if (!item)
+                return;
+
+
+              const title =
+                prompt(
+                  "Title",
+                  item.title || ""
+                );
+
+
+              if (title === null)
+                return;
+
+
+              const description =
+                prompt(
+                  "Description",
+                  item.description || ""
+                );
+
+
+              if (description === null)
+                return;
+
+
+              const imageUrl =
+                prompt(
+                  "Image URL",
+                  item.imageUrl || ""
+                );
+
+
+              if (imageUrl === null)
+                return;
+
+
+              try {
+
+                await updateDoc(
+                  doc(
+                    db,
+                    collectionName,
+                    id
+                  ),
+                  {
+
+                    title,
+
+                    description,
+
+                    imageUrl
+
+                  }
+                );
+
+
+                await manageContent(
+                  collectionName,
+                  displayName
+                );
+
+              }
+
+              catch (error) {
+
+                alert(
+                  "Update failed: " +
+                  error.message
+                );
+
+              }
+
+            }
+          );
+
+        });
+
+
+      /* =========================
+         DELETE CONTENT
+      ========================= */
+
+      document
+        .querySelectorAll(
+          "[data-content-delete]"
+        )
+        .forEach(button => {
+
+          button.addEventListener(
+            "click",
+            async () => {
+
+              const id =
+                button.dataset
+                  .contentDelete;
+
+
+              if (
+                !confirm(
+                  `Delete this ${displayName} item?`
+                )
+              ) {
+
+                return;
+
+              }
+
+
+              try {
+
+                await deleteDoc(
+                  doc(
+                    db,
+                    collectionName,
+                    id
+                  )
+                );
+
+
+                await manageContent(
+                  collectionName,
+                  displayName
+                );
+
+              }
+
+              catch (error) {
+
+                alert(
+                  "Delete failed: " +
+                  error.message
+                );
+
+              }
+
+            }
+          );
+
+        });
+
+    }
+
+
+    /* =========================
+       WEBSITE SETTINGS
+    ========================= */
+
+    async function settings() {
+
+      const snapshot =
+        await getDoc(
+          doc(
+            db,
+            "site",
+            "settings"
+          )
+        );
+
+
+      const data =
+        snapshot.exists()
+          ? snapshot.data()
+          : {};
+
+
+      shell(`
+
+        <div class="panel">
+
+          <h2>
+            Website Settings
+          </h2>
+
+
+          <div class="grid">
+
+            <div>
+
+              <label>
+                Site Name
+              </label>
+
+              <input
+                id="siteName"
+                value="${esc(
+                  data.siteName ||
+                  ""
+                )
+                
+                }"
+              >
+
+            </div>
+
+
+            <div>
+
+              <label>
+                Hero Title
+              </label>
+
+              <input
+                id="heroTitle"
+                value="${esc(
+                  data.heroTitle ||
+                  "Welcome"
+                )}"
+              >
+
+            </div>
+
+
+            <div>
+
+              <label>
+                Hero Subtitle
+              </label>
+
+              <input
+                id="heroSubtitle"
+                value="${esc(
+                  data.heroSubtitle ||
+                  ""
+                )}"
+              >
+
+            </div>
+
+
+            <div>
+
+              <label>
+                Profile Image URL
+              </label>
+
+              <input
+                id="profileUrl"
+                value="${esc(
+                  data.profileUrl ||
+                  ""
+                )}"
+                placeholder="Cloudinary image URL"
+              >
+
+            </div>
+
+
+            <div>
+
+              <label>
+                Portfolio Background URL
+              </label>
+
+              <input
+                id="portfolioBg"
+                value="${esc(
+                  data.portfolioBg ||
+                  ""
+                )}"
+                placeholder="Cloudinary image URL"
+              >
+
+            </div>
+
+
+            <div>
+
+              <label>
+                About Us Background URL
+              </label>
+
+              <input
+                id="blogsBg"
+                value="${esc(
+                  data.blogsBg ||
+                  ""
+                )}"
+                placeholder="Cloudinary image URL"
+              >
+
+            </div>
+
+
+            <div>
+
+              <label>
+                Services Background URL
+              </label>
+
+              <input
+                id="filmBg"
+                value="${esc(
+                  data.filmBg ||
+                  ""
+                )}"
+                placeholder="Cloudinary image URL"
+              >
+
+            </div>
+
+
+            <div>
+
+              <label>
+                Our Clients Background URL
+              </label>
+
+              <input
+                id="startupBg"
+                value="${esc(
+                  data.startupBg ||
+                  ""
+                )}"
+                placeholder="Cloudinary image URL"
+              >
+
+            </div>
+            <div>
+
+  <label>
+    Background Video — Desktop / Laptop
+  </label>
+
+  <div class="drop">
+
+    <label for="backgroundVideoFile">
+      Choose Video
+    </label>
+
+    <input
+      id="backgroundVideoFile"
+      type="file"
+      accept="video/mp4,video/webm,video/ogg"
+    >
+
+    <div
+      id="backgroundVideoFileName"
+      class="muted"
+    >
+      16:9 • MP4, WEBM or OGG
+    </div>
+
+    <div
+      id="backgroundVideoPreview"
+      class="preview"
+    ></div>
+
+  </div>
+
+  <input
+    id="backgroundVideo"
+    value="${esc(
+      data.backgroundVideo ||
+      ""
+    )}"
+    placeholder="Cloudinary video URL"
+    style="margin-top:10px"
+  >
+
+</div>
+
+          </div>
+
+
+            <div>
+
+  <label>
+    Background Video — Mobile
+  </label>
+
+  <div class="drop">
+
+    <label for="backgroundVideoMobileFile">
+      Choose Mobile Video
+    </label>
+
+    <input
+      id="backgroundVideoMobileFile"
+      type="file"
+      accept="video/mp4,video/webm,video/ogg"
+    >
+
+    <div
+      id="backgroundVideoMobileFileName"
+      class="muted"
+    >
+      9:16 • MP4, WEBM or OGG
+    </div>
+
+    <div
+      id="backgroundVideoMobilePreview"
+      class="preview"
+    ></div>
+
+  </div>
+
+  <input
+    id="backgroundVideoMobile"
+    value="${esc(
+      data.mobileBackgroundVideo ||
+      ""
+    )}"
+    placeholder="Cloudinary mobile video URL"
+    style="margin-top:10px"
+  >
+
+</div>
+
+
+          <div
+            class="actions"
+            style="margin-top:20px"
+          >
+
+            <button
+              class="btn"
+              id="saveSettings"
+              type="button"
+            >
+              Save Website Settings
+            </button>
+
+          </div>
+
+
+          <div
+            id="saveStatus"
+            class="status"
+          ></div>
+
+        </div>
+
+      `);
+      /* ==========================================
+   BACKGROUND VIDEO PREVIEW
+========================================== */
+
+$("backgroundVideoFile").addEventListener(
+  "change",
+  event => {
+
+    const file =
+      event.target.files[0];
+
+    $("backgroundVideoFileName").textContent =
+      file?.name ||
+      "MP4, WEBM or OGG";
+
+    $("backgroundVideoPreview").innerHTML =
+      "";
+
+    if (file) {
+
+      const url =
+        URL.createObjectURL(file);
+
+      $("backgroundVideoPreview").innerHTML = `
+
+        <video
+          src="${url}"
+          controls
+          muted
+          style="
+            width:280px;
+            max-width:100%;
+            border-radius:10px;
+            border:1px solid var(--line);
+            margin-top:10px;
+          "
+        ></video>
+
+      `;
+
+    }
+
+  }
+);
+
+
+      /* ==========================================
+         MOBILE BACKGROUND VIDEO PREVIEW
+      ========================================== */
+
+      $("backgroundVideoMobileFile").addEventListener(
+        "change",
+        event => {
+          const file = event.target.files[0];
+
+          $("backgroundVideoMobileFileName").textContent =
+            file?.name || "9:16 • MP4, WEBM or OGG";
+
+          $("backgroundVideoMobilePreview").innerHTML = "";
+
+          if (file) {
+            const url = URL.createObjectURL(file);
+            $("backgroundVideoMobilePreview").innerHTML = `
+              <video
+                src="${url}"
+                controls
+                muted
+                playsinline
+                style="width:180px;max-width:100%;aspect-ratio:9 / 16;object-fit:cover;border-radius:10px;border:1px solid var(--line);margin-top:10px;"
+              ></video>`;
+          }
+        }
+      );
+
+      $("saveSettings")
+  .addEventListener(
+    "click",
+    async () => {
+
+      try {
+
+        $("saveSettings").disabled =
+          true;
+
+        $("saveSettings").textContent =
+          "Saving...";
+
+        $("saveStatus").textContent =
+          "";
+
+        /* Existing video URLs */
+        let backgroundVideo = $("backgroundVideo").value.trim();
+        let mobileBackgroundVideo = $("backgroundVideoMobile").value.trim();
+
+        const allowedVideoTypes = ["video/mp4", "video/webm", "video/ogg"];
+
+        async function uploadBackgroundVideo(file, label) {
+          if (!file) return null;
+
+          if (!allowedVideoTypes.includes(file.type)) {
+            throw new Error(`${label}: Only MP4, WEBM and OGG videos are allowed.`);
+          }
+
+          if (file.size > 100 * 1024 * 1024) {
+            throw new Error(`${label}: Video must be smaller than 100 MB.`);
+          }
+
+          const formData = new FormData();
+          formData.append("file", file);
+          formData.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
+
+          const uploadUrl = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/video/upload`;
+          const response = await fetch(uploadUrl, { method: "POST", body: formData });
+          const result = await response.json();
+
+          if (!response.ok) {
+            throw new Error(result?.error?.message || `${label} Cloudinary upload failed.`);
+          }
+
+          return result.secure_url;
+        }
+
+        const videoFile = $("backgroundVideoFile").files[0];
+
+        if (videoFile) {
+          $("saveStatus").textContent = "Uploading desktop background video...";
+          backgroundVideo = await uploadBackgroundVideo(videoFile, "Desktop background video");
+          $("backgroundVideo").value = backgroundVideo;
+        }
+
+        const mobileVideoFile = $("backgroundVideoMobileFile").files[0];
+
+        if (mobileVideoFile) {
+          $("saveStatus").textContent = "Uploading mobile background video...";
+          mobileBackgroundVideo = await uploadBackgroundVideo(
+  mobileVideoFile,
+  "Mobile background video"
+);
+
+$("backgroundVideoMobile").value = mobileBackgroundVideo;
+        }
+
+        if (videoFile || mobileVideoFile) {
+          $("saveStatus").textContent = "Videos uploaded. Saving settings...";
+        }
+
+        /*
+         * Save ALL existing settings
+         * + backgroundVideo
+         */
+
+        await setDoc(
+          doc(
+            db,
+            "site",
+            "settings"
+          ),
+          {
+
+            siteName:
+              $("siteName")
+                .value,
+
+            heroTitle:
+              $("heroTitle")
+                .value,
+
+            heroSubtitle:
+              $("heroSubtitle")
+                .value,
+
+            profileUrl:
+              $("profileUrl")
+                .value,
+
+            portfolioBg:
+              $("portfolioBg")
+                .value,
+
+            blogsBg:
+              $("blogsBg")
+                .value,
+
+            filmBg:
+              $("filmBg")
+                .value,
+
+            startupBg:
+              $("startupBg")
+                .value,
+
+            backgroundVideo,
+
+            mobileBackgroundVideo,
+
+            updatedAt:
+              serverTimestamp()
+
+          },
+          {
+            merge: true
+          }
+        );
+
+        $("saveStatus").textContent =
+          "Website settings saved successfully.";
+
+        $("backgroundVideoFile").value =
+          "";
+
+        $("backgroundVideoFileName")
+          .textContent =
+          "MP4, WEBM or OGG";
+
+        $("backgroundVideoPreview")
+          .innerHTML =
+          "";
+
+        $("backgroundVideoMobileFile").value = "";
+        $("backgroundVideoMobileFileName").textContent = "9:16 • MP4, WEBM or OGG";
+        $("backgroundVideoMobilePreview").innerHTML = "";
+
+      }
+
+      catch (error) {
+
+        console.error(
+          "Settings save error:",
+          error
+        );
+
+        $("saveStatus").textContent =
+          "Save failed: " +
+          error.message;
+
+      }
+
+      finally {
+
+        $("saveSettings").disabled =
+          false;
+
+        $("saveSettings").textContent =
+          "Save Website Settings";
+
+      }
+
+    }
+  );
+    }
+
+
+    /* =========================
+       MEDIA
+    ========================= */
+
+    async function media() {
+
+      shell(`
+
+        <div class="panel">
+
+          <h2>
+            Media Library
+          </h2>
+
+          <p class="muted">
+
+            Portfolio images are uploaded
+            directly to Cloudinary.
+
+            Firestore stores the image URL
+            and portfolio information.
+
+          </p>
+
+        </div>
+
+
+        <div class="panel">
+
+          <h3>
+            Current Architecture
+          </h3>
+
+          <p class="muted">
+
+            Authentication →
+            Firebase Authentication
+
+            <br><br>
+
+            Website Data →
+            Cloud Firestore
+
+            <br><br>
+
+            Images →
+            Cloudinary
+
+          </p>
+
+        </div>
+
+
+        <div class="panel">
+
+          <h3>
+            Content Structure
+          </h3>
+
+          <p class="muted">
+
+            Portfolio →
+            portfolio collection
+
+            <br><br>
+
+            About Us →
+            blogs collection
+
+            <br><br>
+
+            Services →
+            filmmaking collection
+
+            <br><br>
+
+            Our Clients →
+            startups collection
+
+          </p>
+
+        </div>
+
+      `);
+
+    }
+
+  </script>
+
+</body>
+
+</html>
