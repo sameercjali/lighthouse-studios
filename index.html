@@ -1196,6 +1196,104 @@
     }
 
 
+
+
+    /* ==================================================
+       FOOTER SOCIAL LINKS
+    ================================================== */
+
+    .footer-social {
+
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin: 4px 0 22px;
+
+    }
+
+    .footer-social-title {
+
+      margin: 0;
+      color: #ffcc00;
+      font-family: "Playfair Display", Georgia, serif;
+      font-size: 18px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+
+    }
+
+    .footer-social-links {
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 18px;
+
+    }
+
+    .footer-social-link {
+
+      width: 46px;
+      height: 46px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid rgba(255, 204, 0, 0.7);
+      border-radius: 50%;
+      color: #ffcc00;
+      background: rgba(255, 204, 0, 0.04);
+      text-decoration: none;
+      transition: transform 0.25s ease, background 0.25s ease, border-color 0.25s ease;
+
+    }
+
+    .footer-social-link svg {
+
+      width: 23px;
+      height: 23px;
+      display: block;
+      fill: currentColor;
+
+    }
+
+    .footer-social-link:hover,
+    .footer-social-link:focus-visible {
+
+      color: #000;
+      background: #ffcc00;
+      border-color: #ffcc00;
+      transform: translateY(-2px);
+      outline: none;
+
+    }
+
+    @media (max-width: 768px) {
+
+      .footer-social {
+        margin: 2px 0 20px;
+      }
+
+      .footer-social-title {
+        font-size: 16px;
+        letter-spacing: 1.2px;
+      }
+
+      .footer-social-link {
+        width: 42px;
+        height: 42px;
+      }
+
+      .footer-social-link svg {
+        width: 21px;
+        height: 21px;
+      }
+
+    }
+
+
     .footer-copyright {
 
       color: #666;
@@ -5029,6 +5127,755 @@
 
 
 </style>
+
+<style id="lh-complete-mobile-optimization">
+/* ==========================================================
+   THE LIGHT HOUSE STUDIOS — COMPLETE MOBILE OPTIMIZATION
+   Final mobile layer. Keeps CMS, Cloudinary, Firebase and
+   existing desktop layouts intact.
+   ========================================================== */
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  overscroll-behavior-x: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ---------- MOBILE NAV ---------- */
+@media (max-width: 768px) {
+  nav {
+    height: 64px !important;
+    min-height: 64px !important;
+    padding: 6px 12px !important;
+    padding-top: max(6px, env(safe-area-inset-top)) !important;
+    background: rgba(8,8,8,.88) !important;
+  }
+
+  .nav-logo {
+    left: max(12px, env(safe-area-inset-left)) !important;
+  }
+
+  .nav-logo img {
+    width: 42px !important;
+    height: 42px !important;
+  }
+
+  .mobile-menu-btn {
+    right: max(12px, env(safe-area-inset-right)) !important;
+    width: 44px !important;
+    height: 44px !important;
+  }
+
+  nav ul {
+    top: 64px !important;
+    max-height: calc(100svh - 64px) !important;
+    overflow-y: auto !important;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: max(18px, env(safe-area-inset-bottom)) !important;
+  }
+
+  nav ul li a {
+    min-height: 48px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  /* Avoid hover-only visual states on touch devices. */
+  @media (hover: none) {
+    nav ul li a:hover,
+    .mobile-menu-btn:hover,
+    .portfolio-arrow:hover,
+    .carousel-arrow:hover {
+      transform: none !important;
+    }
+  }
+}
+
+/* ---------- HOME / SECTION RHYTHM ---------- */
+@media (max-width: 768px) {
+  section#home {
+    min-height: 100svh !important;
+    height: 100svh !important;
+    padding:
+      calc(64px + env(safe-area-inset-top))
+      16px
+      30px !important;
+  }
+
+  /* Content sections should use natural height instead of
+     forcing every CMS section to be exactly one viewport. */
+  section#portfolio,
+  section#services,
+  section#about-us,
+  section#clients,
+  section#contact {
+    min-height: auto !important;
+    height: auto !important;
+  }
+
+  section#portfolio,
+  section#services,
+  section#about-us,
+  section#clients {
+    padding:
+      76px 12px
+      max(58px, env(safe-area-inset-bottom)) !important;
+    scroll-margin-top: 64px !important;
+  }
+
+  section#contact {
+    padding:
+      82px 14px
+      max(58px, env(safe-area-inset-bottom)) !important;
+    scroll-margin-top: 64px !important;
+  }
+
+  /* Background images remain visible and fixed layers stay cheap. */
+  #portfolio::before,
+  #services::before,
+  #about-us::before,
+  #clients::before {
+    background-attachment: scroll !important;
+    background-position: center center !important;
+    background-size: cover !important;
+  }
+}
+
+/* ---------- PORTFOLIO ---------- */
+@media (max-width: 768px) {
+  #integrated-portfolio,
+  #integrated-portfolio .container {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-height: 0 !important;
+  }
+
+  #integrated-portfolio .container {
+    padding: 0 2px 8px !important;
+  }
+
+  #integrated-portfolio .page-title {
+    width: 100% !important;
+    font-size: clamp(2rem, 9vw, 2.65rem) !important;
+    line-height: 1 !important;
+    letter-spacing: 1.5px !important;
+    margin-bottom: 0 !important;
+  }
+
+  #integrated-portfolio .portfolio-carousel {
+    width: 100% !important;
+    margin-top: 30px !important;
+    grid-template-columns: 38px minmax(0, 1fr) 38px !important;
+    gap: 5px !important;
+  }
+
+  #integrated-portfolio .portfolio-viewport {
+    min-width: 0 !important;
+    border-radius: 12px !important;
+  }
+
+  #integrated-portfolio .event-title {
+    font-size: clamp(1.35rem, 6.8vw, 2.05rem) !important;
+    line-height: 1.12 !important;
+    margin-bottom: 14px !important;
+    padding: 0 4px !important;
+  }
+
+  #integrated-portfolio .event-main {
+    width: 100% !important;
+    max-width: 100% !important;
+    border-radius: 12px !important;
+  }
+
+  #integrated-portfolio .portfolio-arrow {
+    width: 36px !important;
+    height: 36px !important;
+    min-width: 36px !important;
+    font-size: 19px !important;
+    border-width: 1px !important;
+  }
+
+  #integrated-portfolio .portfolio-counter {
+    margin-top: 13px !important;
+    font-size: 8px !important;
+    letter-spacing: 2px !important;
+  }
+
+  #integrated-portfolio .portfolio-counter strong {
+    font-size: 15px !important;
+  }
+
+  #integrated-portfolio .portfolio-swipe-hint {
+    margin-top: 8px !important;
+    font-size: 7px !important;
+    letter-spacing: 1px !important;
+  }
+}
+
+/* Very small phones: maximize media width without horizontal scroll. */
+@media (max-width: 400px) {
+  #integrated-portfolio .portfolio-carousel {
+    grid-template-columns: 34px minmax(0, 1fr) 34px !important;
+    gap: 3px !important;
+  }
+
+  #integrated-portfolio .portfolio-arrow {
+    width: 32px !important;
+    height: 32px !important;
+    min-width: 32px !important;
+    font-size: 17px !important;
+  }
+}
+
+/* ---------- SERVICES ---------- */
+@media (max-width: 768px) {
+  #integrated-services,
+  #integrated-services .container,
+  #integrated-services .services-carousel,
+  #integrated-services .carousel-viewport {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  #integrated-services .container {
+    padding: 0 0 8px !important;
+  }
+
+  #integrated-services h1 {
+    font-size: clamp(2rem, 8.8vw, 2.55rem) !important;
+    line-height: 1 !important;
+    letter-spacing: 1.2px !important;
+  }
+
+  #integrated-services .services-carousel {
+    margin-top: 28px !important;
+  }
+
+  #integrated-services .carousel-viewport {
+    overflow: hidden !important;
+    touch-action: pan-y pinch-zoom !important;
+    border-radius: 22px;
+  }
+
+  #integrated-services #servicesContent {
+    gap: 10px !important;
+  }
+
+  #integrated-services .content-card {
+    flex: 0 0 min(82vw, 390px) !important;
+    width: min(82vw, 390px) !important;
+    min-height: 390px !important;
+    padding: 32px 22px !important;
+    border-radius: 19px !important;
+    box-shadow: 0 18px 45px rgba(0,0,0,.42) !important;
+  }
+
+  #integrated-services .content-body h2 {
+    font-size: clamp(1.65rem, 7.2vw, 2rem) !important;
+    line-height: 1.08 !important;
+    margin-bottom: 19px !important;
+  }
+
+  #integrated-services .service-list {
+    gap: 9px !important;
+  }
+
+  #integrated-services .service-list li {
+    font-size: clamp(12.5px, 3.45vw, 14px) !important;
+    line-height: 1.42 !important;
+  }
+
+  #integrated-services .carousel-dots {
+    margin-top: 14px !important;
+  }
+
+  #integrated-services .swipe-hint {
+    margin-top: 8px !important;
+  }
+
+  #integrated-services .carousel-arrow {
+    display: none !important;
+  }
+}
+
+/* ---------- ABOUT ---------- */
+@media (max-width: 768px) {
+  #integrated-about,
+  #integrated-about .container,
+  #integrated-about #aboutContent {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-height: 0 !important;
+  }
+
+  #integrated-about .container {
+    padding: 0 2px 8px !important;
+  }
+
+  #integrated-about h1 {
+    font-size: clamp(2rem, 8.8vw, 2.6rem) !important;
+    line-height: 1 !important;
+    letter-spacing: 2px !important;
+    margin-bottom: 26px !important;
+  }
+
+  #integrated-about .profile {
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+    max-width: 520px !important;
+    gap: 26px !important;
+  }
+
+  #integrated-about .photo-area {
+    width: 100% !important;
+    min-height: 0 !important;
+  }
+
+  #integrated-about .photo-card {
+    width: min(88vw, 370px) !important;
+    height: min(112vw, 430px) !important;
+    max-width: 370px !important;
+    margin: 0 auto !important;
+  }
+
+  #integrated-about .profile-info {
+    width: 100% !important;
+    max-width: 520px !important;
+  }
+
+  #integrated-about .profile-label {
+    font-size: 9px !important;
+    letter-spacing: 3px !important;
+    margin-bottom: 10px !important;
+  }
+
+  #integrated-about .profile-name {
+    font-size: clamp(2.15rem, 10vw, 3.25rem) !important;
+    line-height: .98 !important;
+    letter-spacing: -1.2px !important;
+    margin-bottom: 13px !important;
+  }
+
+  #integrated-about .profile-position {
+    font-size: 10px !important;
+    letter-spacing: 1.4px !important;
+    gap: 9px !important;
+    margin-bottom: 17px !important;
+  }
+
+  #integrated-about .profile-position::before {
+    width: 25px !important;
+  }
+
+  #integrated-about .profile-description {
+    max-width: 100% !important;
+    font-size: 13px !important;
+    line-height: 1.72 !important;
+  }
+
+  #integrated-about .info-line {
+    margin-top: 18px !important;
+  }
+
+  #integrated-about .profile-navigation {
+    margin-top: 23px !important;
+    padding: 0 2px !important;
+  }
+
+  #integrated-about .nav-button {
+    width: 42px !important;
+    height: 42px !important;
+    font-size: 17px !important;
+  }
+}
+
+/* ---------- COLLABORATIONS ---------- */
+@media (max-width: 768px) {
+  #integrated-clients,
+  #integrated-clients .container,
+  #integrated-clients #clientsContent {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  #integrated-clients .container {
+    padding: 0 2px 8px !important;
+  }
+
+  #integrated-clients h1 {
+    font-size: clamp(1.9rem, 8.4vw, 2.55rem) !important;
+    line-height: 1 !important;
+    letter-spacing: 1.5px !important;
+    margin-bottom: 28px !important;
+    white-space: normal !important;
+  }
+
+  #integrated-clients #clientsContent {
+    grid-template-columns: 1fr !important;
+    gap: 17px !important;
+  }
+
+  #integrated-clients .content-card {
+    width: 100% !important;
+    border-radius: 15px !important;
+    box-shadow: 0 16px 42px rgba(0,0,0,.36) !important;
+  }
+
+  #integrated-clients .content-image {
+    height: min(56vw, 220px) !important;
+    min-height: 165px !important;
+  }
+
+  #integrated-clients .content-image img {
+    padding: 12px !important;
+  }
+
+  #integrated-clients .content-body {
+    padding: 18px 18px 20px !important;
+  }
+
+  #integrated-clients .content-body h2 {
+    font-size: clamp(1.35rem, 6.4vw, 1.75rem) !important;
+    line-height: 1.15 !important;
+    margin-bottom: 7px !important;
+  }
+
+  #integrated-clients .content-body p {
+    font-size: 13px !important;
+    line-height: 1.62 !important;
+  }
+}
+
+/* ---------- CONTACT ---------- */
+@media (max-width: 768px) {
+  #contact {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 28px !important;
+    text-align: center !important;
+  }
+
+  .contact-heading {
+    min-height: 0 !important;
+    width: 100% !important;
+    justify-content: center !important;
+    padding: 0 !important;
+  }
+
+  #contact .section-title {
+    width: 100% !important;
+    text-align: center !important;
+    font-size: clamp(2.9rem, 14vw, 4.7rem) !important;
+    line-height: .9 !important;
+    letter-spacing: 0 !important;
+  }
+
+  .contact-form-wrapper {
+    width: 100% !important;
+    max-width: 560px !important;
+    margin: 0 auto !important;
+    padding: 24px 17px !important;
+    border-radius: 20px !important;
+    backdrop-filter: blur(9px) !important;
+    -webkit-backdrop-filter: blur(9px) !important;
+  }
+
+  .contact-form-header {
+    margin-bottom: 19px !important;
+  }
+
+  .contact-form-header h3 {
+    font-size: 21px !important;
+    line-height: 1.2 !important;
+  }
+
+  #contactForm {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 13px !important;
+  }
+
+  .form-group:last-of-type,
+  .contact-submit,
+  .form-success,
+  .form-error {
+    grid-column: auto !important;
+  }
+
+  .form-group {
+    gap: 6px !important;
+  }
+
+  .form-group label {
+    font-size: 11px !important;
+    text-align: left !important;
+  }
+
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    min-height: 46px !important;
+    padding: 12px 12px !important;
+    font-size: 16px !important; /* prevents iOS input zoom */
+    border-radius: 9px !important;
+  }
+
+  .form-group textarea {
+    min-height: 115px !important;
+  }
+
+  .contact-submit {
+    min-height: 48px !important;
+    padding: 12px 20px !important;
+    font-size: 13px !important;
+    margin-top: 2px !important;
+  }
+
+  .contact-success-screen {
+    padding: 25px 10px 12px !important;
+  }
+}
+
+/* ---------- FOOTER ---------- */
+@media (max-width: 768px) {
+  footer {
+    padding:
+      30px 15px
+      max(26px, env(safe-area-inset-bottom)) !important;
+  }
+
+  .footer-company {
+    font-size: 17px !important;
+    line-height: 1.35 !important;
+    letter-spacing: .7px !important;
+    margin-bottom: 15px !important;
+  }
+
+  .footer-contact {
+    gap: 8px !important;
+    margin-bottom: 17px !important;
+  }
+
+  .footer-contact a {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    min-height: 42px !important;
+    padding: 7px 8px !important;
+    font-size: 13px !important;
+  }
+
+  .footer-copyright {
+    max-width: 340px !important;
+    font-size: 10.5px !important;
+    line-height: 1.55 !important;
+  }
+}
+
+/* ---------- TOUCH / PERFORMANCE ---------- */
+@media (hover: none) and (pointer: coarse) {
+  #integrated-about .profile-photo,
+  #integrated-clients .content-image img {
+    transform: none !important;
+  }
+
+  #integrated-about .photo-card:hover .profile-photo {
+    transform: none !important;
+    filter: grayscale(100%) contrast(1.05) brightness(.95) !important;
+  }
+
+  .section-btn:hover,
+  .contact-submit:hover {
+    transform: none !important;
+  }
+}
+
+/* ---------- SMALL DEVICES ---------- */
+@media (max-width: 380px) {
+  section#portfolio,
+  section#services,
+  section#about-us,
+  section#clients {
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+  }
+
+  #integrated-about .photo-card {
+    width: 90vw !important;
+    height: 108vw !important;
+  }
+
+  .contact-form-wrapper {
+    padding: 21px 13px !important;
+  }
+}
+
+/* ---------- REDUCED MOTION ---------- */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    scroll-behavior: auto !important;
+  }
+}
+</style>
+
+
+<style id="portfolio-mobile-vertical-center">
+/* =========================================================
+   PORTFOLIO — MOBILE VERTICAL CENTERING
+   Keeps the complete portfolio composition centered in the
+   phone viewport instead of leaving a large empty area below.
+   ========================================================= */
+@media (max-width: 768px) {
+  section#portfolio {
+    min-height: 100svh !important;
+    height: 100svh !important;
+    padding: 0 12px !important;
+    justify-content: center !important;
+    align-items: center !important;
+    overflow: hidden !important;
+  }
+
+  #integrated-portfolio {
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+  }
+
+  #integrated-portfolio .container {
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    padding: 0 8px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  #integrated-portfolio .page-title {
+    margin: 0 0 12px !important;
+  }
+
+  #integrated-portfolio .portfolio-carousel {
+    margin-top: 16px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  #integrated-portfolio .container {
+    padding: 0 8px !important;
+  }
+
+  #integrated-portfolio .page-title {
+    margin-bottom: 10px !important;
+  }
+
+  #integrated-portfolio .portfolio-carousel {
+    margin-top: 14px !important;
+  }
+}
+</style>
+
+
+<!-- MOBILE HOME-BACKGROUND OVERLAP FIX -->
+<style id="lh-mobile-home-background-fix">
+@media (max-width: 768px) {
+  /*
+    The Home background video is viewport-fixed. It must not remain visible
+    while Portfolio is on screen.
+  */
+  #backgroundVideo.bg-video {
+    position: fixed !important;
+    z-index: -10 !important;
+    transition: opacity .25s ease-out !important;
+  }
+
+  /* Keep section backgrounds above the Home video. */
+  #home,
+  #portfolio,
+  #services,
+  #about-us,
+  #clients,
+  #contact {
+    isolation: isolate;
+  }
+
+  #portfolio,
+  #services,
+  #about-us,
+  #clients,
+  #contact {
+    background-color: #000 !important;
+  }
+}
+</style>
+
+
+
+<style id="lh-mobile-section-position-final-fix">
+/* ==========================================================
+   MOBILE SECTION POSITION FIX
+   Keep each section locked to the viewport beneath the fixed
+   navbar so the previous section's background cannot remain
+   visible above the current section.
+   ========================================================== */
+@media (max-width: 768px) {
+  html {
+    scroll-padding-top: 64px !important;
+    scroll-snap-type: y mandatory !important;
+  }
+
+  body {
+    scroll-snap-type: y mandatory !important;
+    overflow-x: hidden !important;
+  }
+
+  nav {
+    z-index: 1000 !important;
+    background: #080808 !important;
+    opacity: 1 !important;
+  }
+
+  section#home,
+  section#portfolio,
+  section#services,
+  section#about-us,
+  section#clients,
+  section#contact {
+    scroll-snap-align: start !important;
+    scroll-snap-stop: always !important;
+    scroll-margin-top: 0 !important;
+  }
+
+  /* Every section owns its own visible background area. */
+  section#portfolio::before,
+  section#services::before,
+  section#about-us::before,
+  section#clients::before {
+    z-index: 0 !important;
+  }
+
+  section#portfolio > #integrated-portfolio,
+  section#services > #integrated-services,
+  section#about-us > #integrated-about,
+  section#clients > #integrated-clients {
+    position: relative !important;
+    z-index: 2 !important;
+  }
+}
+</style>
+
 </head>
 
 
@@ -5584,13 +6431,56 @@
 
 
       <a
-        href="tel:+910000000000"
+        href="tel:+9162810 90269"
       >
 
-        +91 00000 00000
+        +91 62810 90269
 
       </a>
 
+
+    </div>
+
+
+
+
+    <div class="footer-social" aria-label="Social media links">
+
+      <h3 class="footer-social-title">Follow Us</h3>
+
+      <div class="footer-social-links">
+
+        <!-- Replace the href below with your Instagram profile URL -->
+        <a
+          class="footer-social-link"
+          href="https://www.instagram.com/"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Follow The Light House Studios on Instagram"
+          title="Instagram"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <rect x="3" y="3" width="18" height="18" rx="5" ry="5" fill="none" stroke="currentColor" stroke-width="2"/>
+            <circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="2"/>
+            <circle cx="17.5" cy="6.5" r="1.2"/>
+          </svg>
+        </a>
+
+        <!-- Replace the href below with your WhatsApp chat link -->
+        <a
+          class="footer-social-link"
+          href="https://wa.me/"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Contact The Light House Studios on WhatsApp"
+          title="WhatsApp"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 2.5a9.5 9.5 0 0 0-8.2 14.3L2.5 21.5l4.9-1.3A9.5 9.5 0 1 0 12 2.5Zm0 17a7.5 7.5 0 0 1-3.8-1l-.3-.2-2.9.8.8-2.8-.2-.3A7.5 7.5 0 1 1 12 19.5Zm4.2-5.5c-.2-.1-1.2-.6-1.4-.7-.2-.1-.3-.1-.5.1s-.5.7-.7.9c-.1.2-.3.2-.5.1a6.1 6.1 0 0 1-1.8-1.1 6.8 6.8 0 0 1-1.3-1.6c-.1-.2 0-.3.1-.4l.4-.5c.1-.1.1-.3.2-.4.1-.2 0-.3 0-.4s-.5-1.2-.7-1.7c-.2-.5-.4-.4-.5-.4h-.4c-.2 0-.4.1-.6.3-.2.2-.8.8-.8 2s.8 2.3.9 2.5c.1.2 1.6 2.5 3.9 3.4 2.3.9 2.3.6 2.7.6.4 0 1.2-.5 1.4-.9.2-.4.2-.8.2-.9-.1-.2-.3-.3-.5-.4Z"/>
+          </svg>
+        </a>
+
+      </div>
 
     </div>
 
@@ -5962,8 +6852,7 @@
                   Math.max(
                     0,
                     sectionTop -
-                    navHeight -
-                    12
+                    navHeight
                   );
 
                 window.scrollTo({
@@ -10011,6 +10900,571 @@ section.in-view::before {
 })();
 </script>
 
-</body>
 
+<script id="lh-mobile-performance-controller">
+(function () {
+  const isMobile = () =>
+    window.matchMedia("(max-width: 768px)").matches;
+
+  /* Prevent the mobile menu from leaving the page behind it in an
+     awkward scroll position. */
+  const nav = document.querySelector("nav");
+  const menuBtn = document.getElementById("mobileMenuBtn");
+
+  function syncBodyLock() {
+    if (!isMobile()) {
+      document.body.style.overflow = "";
+      return;
+    }
+    document.body.style.overflow =
+      nav && nav.classList.contains("menu-open") ? "hidden" : "";
+  }
+
+  if (menuBtn && nav) {
+    const observer = new MutationObserver(syncBodyLock);
+    observer.observe(nav, { attributes: true, attributeFilter: ["class"] });
+    menuBtn.addEventListener("click", () => {
+      requestAnimationFrame(syncBodyLock);
+    });
+    window.addEventListener("resize", syncBodyLock, { passive: true });
+    syncBodyLock();
+  }
+
+  /* Add async image decoding to dynamically-created CMS images.
+     This reduces main-thread image decode pressure on phones. */
+  function optimizeImages(root = document) {
+    root.querySelectorAll("img").forEach(img => {
+      if (!img.hasAttribute("decoding")) img.decoding = "async";
+    });
+  }
+
+  optimizeImages();
+
+  const imageObserver = new MutationObserver(mutations => {
+    for (const mutation of mutations) {
+      for (const node of mutation.addedNodes) {
+        if (node.nodeType === 1) optimizeImages(node);
+      }
+    }
+  });
+
+  imageObserver.observe(document.body, {
+    childList: true,
+    subtree: true
+  });
+
+  /* Keep touch carousels responsive when a browser changes orientation. */
+  let orientationTimer;
+  window.addEventListener("orientationchange", () => {
+    clearTimeout(orientationTimer);
+    orientationTimer = setTimeout(() => {
+      window.dispatchEvent(new Event("resize"));
+      optimizeImages();
+    }, 180);
+  }, { passive: true });
+
+  /* Avoid expensive animated background transforms on small phones. */
+  if (isMobile() && window.matchMedia("(max-width: 480px)").matches) {
+    document.documentElement.classList.add("lh-small-phone");
+  }
+})();
+</script>
+
+
+
+<style id="lh-section-background-isolation-fix">
+/* ==========================================================
+   FIX: SECTION BACKGROUNDS MUST NEVER BLEED INTO EACH OTHER
+   Each homepage section gets its own stacking context. The
+   Firestore background belongs strictly to that section and
+   cannot be painted behind/through the neighbouring section.
+   ========================================================== */
+#home,
+#portfolio,
+#services,
+#about-us,
+#clients,
+#contact {
+  isolation: isolate !important;
+}
+
+#portfolio::before,
+#services::before,
+#about-us::before,
+#clients::before {
+  z-index: 0 !important;
+  inset: 0 !important;
+  pointer-events: none !important;
+}
+
+#portfolio::after,
+#services::after,
+#about-us::after,
+#clients::after {
+  z-index: 1 !important;
+}
+
+#portfolio > #integrated-portfolio,
+#services > #integrated-services,
+#about-us > #integrated-about,
+#clients > #integrated-clients {
+  position: relative !important;
+  z-index: 2 !important;
+}
+
+/* Keep the admin background attached to the full outer section. */
+#portfolio,
+#services,
+#about-us,
+#clients {
+  background-color: #000 !important;
+  background-image: none !important;
+}
+
+/* Mobile: do not allow the next section to visually cover the
+   current section while it is still occupying the viewport. */
+@media (max-width: 768px) {
+  #portfolio,
+  #services,
+  #about-us,
+  #clients {
+    overflow: clip !important;
+  }
+}
+</style>
+
+<script id="lh-mobile-home-background-fix-js">
+(function () {
+  const video = document.getElementById("backgroundVideo");
+  const home = document.getElementById("home");
+
+  if (!video || !home) return;
+
+  function syncHomeBackground() {
+    const mobile = window.matchMedia("(max-width: 768px)").matches;
+
+    if (!mobile) {
+      return;
+    }
+
+    const homeRect = home.getBoundingClientRect();
+
+    /*
+      Show the Home video only while Home is still visible.
+      Once Home has completely left the viewport, hide it immediately.
+    */
+    const homeVisible = homeRect.bottom > 0 && homeRect.top < window.innerHeight;
+
+    video.classList.toggle("hidden", !homeVisible);
+  }
+
+  let raf = 0;
+  function requestSync() {
+    if (raf) return;
+    raf = requestAnimationFrame(function () {
+      raf = 0;
+      syncHomeBackground();
+    });
+  }
+
+  window.addEventListener("scroll", requestSync, { passive: true });
+  window.addEventListener("resize", requestSync, { passive: true });
+  window.addEventListener("orientationchange", requestSync, { passive: true });
+  window.addEventListener("load", syncHomeBackground);
+
+  syncHomeBackground();
+})();
+</script>
+
+
+<style id="lh-portfolio-background-full-mobile">
+@media (max-width: 768px) {
+  #portfolio {
+    min-height: 100svh !important;
+    height: 100svh !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+  }
+}
+</style>
+
+
+<style id="lh-portfolio-full-screen-final-fix">
+/* ==========================================================
+   PORTFOLIO: FULL MOBILE SCREEN
+   The Portfolio section itself owns one complete viewport.
+   Its Firestore background therefore continues all the way
+   to the bottom of the screen before Services can begin.
+   ========================================================== */
+@media (max-width: 768px) {
+  #portfolio {
+    position: relative !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-start !important;
+    align-items: center !important;
+    width: 100% !important;
+    min-height: 100svh !important;
+    height: 100svh !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+    isolation: isolate !important;
+  }
+
+  /* Make the Portfolio background layer exactly the size of
+     the outer Portfolio section, not the CMS content. */
+  #portfolio::before {
+    content: "" !important;
+    position: absolute !important;
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    background-image: var(--section-bg, none) !important;
+    background-repeat: no-repeat !important;
+    background-position: center center !important;
+    background-size: cover !important;
+    background-attachment: scroll !important;
+    z-index: 0 !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  #portfolio::after {
+    content: "" !important;
+    position: absolute !important;
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    z-index: 1 !important;
+    pointer-events: none !important;
+  }
+
+  #portfolio > #integrated-portfolio {
+    position: relative !important;
+    z-index: 2 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+  }
+
+  #integrated-portfolio .container {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+}
+</style>
+
+
+<style id="lh-portfolio-100vh-definitive-fix">
+/* ==========================================================
+   DEFINITIVE MOBILE PORTFOLIO HEIGHT FIX
+   Portfolio is an actual full-screen section. Do not let the
+   CMS wrapper/content determine the section's height.
+   ========================================================== */
+@media (max-width: 768px) {
+  html, body {
+    min-height: 100%;
+  }
+
+  /* The OUTER section owns the complete viewport. */
+  body > section#portfolio,
+  section#portfolio {
+    display: block !important;
+    position: relative !important;
+    width: 100% !important;
+    height: 100dvh !important;
+    min-height: 100dvh !important;
+    max-height: none !important;
+    flex: 0 0 100dvh !important;
+    box-sizing: border-box !important;
+    margin: 0 !important;
+    padding: 68px 0 0 !important;
+    overflow: hidden !important;
+    isolation: isolate !important;
+  }
+
+  /* Background belongs to the whole section. */
+  section#portfolio::before {
+    content: "" !important;
+    position: absolute !important;
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 100% !important;
+    background-image: var(--section-bg, none) !important;
+    background-repeat: no-repeat !important;
+    background-position: center center !important;
+    background-size: cover !important;
+    background-attachment: scroll !important;
+    opacity: 1 !important;
+    z-index: 0 !important;
+    pointer-events: none !important;
+    transform: none !important;
+  }
+
+  /* Keep the CMS content above the background but never use it
+     to determine the section's height. */
+  section#portfolio > #integrated-portfolio {
+    display: block !important;
+    position: relative !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: visible !important;
+    z-index: 2 !important;
+  }
+
+  section#portfolio > #integrated-portfolio > .container {
+    width: 100% !important;
+    max-width: none !important;
+    height: auto !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 8px !important;
+    box-sizing: border-box !important;
+  }
+
+  /* The following section starts only after this 100dvh block. */
+  section#services,
+  section#about-us,
+  section#clients,
+  section#contact {
+    position: relative !important;
+    z-index: 1 !important;
+  }
+}
+
+@supports not (height: 100dvh) {
+  @media (max-width: 768px) {
+    section#portfolio {
+      height: 100svh !important;
+      min-height: 100svh !important;
+      flex-basis: 100svh !important;
+    }
+  }
+}
+</style>
+
+
+<style id="lh-navbar-background-bleed-fix">
+/* ==========================================================
+   NAVBAR BACKGROUND BLEED FIX
+   The fixed navbar must be an opaque stacking layer. Otherwise
+   the previous/current section background remains visible
+   through the translucent navbar on desktop and mobile.
+   ========================================================== */
+nav {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  width: 100% !important;
+  z-index: 10000 !important;
+  background: #0d0d0d !important;
+  background-image: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  isolation: isolate !important;
+}
+
+/* Do not allow section stacking layers to paint above the navbar. */
+nav::before,
+nav::after {
+  z-index: -1 !important;
+}
+
+@media (max-width: 768px) {
+  nav {
+    background: #0d0d0d !important;
+    background-image: none !important;
+  }
+}
+</style>
+
+
+<style id="lh-desktop-services-centered-final-fix">
+/* ==========================================================
+   DESKTOP SERVICES — CENTERED + NO PREVIOUS-SECTION STRIP
+   The fixed navbar ends exactly where the active section begins.
+   Services content is centered in the space below the navbar.
+   Mobile rules are intentionally left untouched.
+   ========================================================== */
+@media (min-width: 769px) {
+  /* The Services section occupies the viewport below the navbar. */
+  section#services {
+    position: relative !important;
+    width: 100% !important;
+    height: calc(100svh - var(--lh-nav-height, 55px)) !important;
+    min-height: calc(100svh - var(--lh-nav-height, 55px)) !important;
+    margin: 0 !important;
+    padding: 0 20px !important;
+    box-sizing: border-box !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    overflow: hidden !important;
+    isolation: isolate !important;
+  }
+
+  /* Keep the admin/Firestore background attached to the complete section. */
+  section#services::before {
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    z-index: 0 !important;
+    background-image: var(--section-bg, none) !important;
+    background-size: cover !important;
+    background-position: center center !important;
+    background-repeat: no-repeat !important;
+    transform: none !important;
+  }
+
+  section#services > #integrated-services {
+    position: relative !important;
+    z-index: 2 !important;
+    width: min(1200px, 100%) !important;
+    max-width: 1200px !important;
+    height: auto !important;
+    min-height: 0 !important;
+    margin: 0 auto !important;
+    overflow: visible !important;
+  }
+
+  #integrated-services .container {
+    width: 100% !important;
+    max-width: 1200px !important;
+    height: auto !important;
+    min-height: 0 !important;
+    margin: 0 auto !important;
+    padding: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  #integrated-services h1 {
+    margin: 0 !important;
+  }
+
+  #integrated-services .services-carousel {
+    width: 100% !important;
+    margin-top: 18px !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+  }
+
+  /* Center the active card on the actual laptop viewport.
+     Side cards may still peek without shifting the active card. */
+  #integrated-services .carousel-viewport {
+    width: 100% !important;
+    max-width: 1200px !important;
+    margin: 0 auto !important;
+    overflow: visible !important;
+  }
+
+  #integrated-services #servicesContent {
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+}
+
+/* Use the real navbar height when the browser reports it. */
+@media (min-width: 769px) {
+  :root {
+    --lh-nav-height: 55px;
+  }
+}
+</style>
+
+<style id="lh-mobile-background-full-width-final">
+/* ==========================================================
+   MOBILE: SECTION BACKGROUNDS MUST COVER THE ENTIRE SCREEN
+   Prevent narrow section boxes / horizontal overflow from leaving
+   an uncovered strip on the right side of the viewport.
+   ========================================================== */
+@media (max-width: 768px) {
+  html,
+  body {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow-x: hidden !important;
+  }
+
+  body {
+    position: relative !important;
+  }
+
+  #home,
+  #portfolio,
+  #services,
+  #about-us,
+  #clients,
+  #contact {
+    position: relative !important;
+    width: 100vw !important;
+    min-width: 100vw !important;
+    max-width: 100vw !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    box-sizing: border-box !important;
+    overflow-x: hidden !important;
+  }
+
+  /* Force every CMS section background layer to span the viewport,
+     even if an earlier rule gives the section a narrower content width. */
+  #portfolio::before,
+  #services::before,
+  #about-us::before,
+  #clients::before,
+  #home::before,
+  #contact::before {
+    left: 0 !important;
+    right: auto !important;
+    width: 100vw !important;
+    max-width: 100vw !important;
+    height: 100% !important;
+    box-sizing: border-box !important;
+    background-size: cover !important;
+    background-repeat: no-repeat !important;
+    pointer-events: none !important;
+  }
+
+  /* Solid fallback behind every section prevents any white body area
+     from showing if a background image has transparent/empty pixels. */
+  #portfolio,
+  #services,
+  #about-us,
+  #clients,
+  #contact {
+    background-color: #000 !important;
+  }
+
+  #integrated-portfolio,
+  #integrated-services,
+  #integrated-about,
+  #integrated-clients {
+    max-width: 100vw !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Prevent child carousels/images from expanding the page horizontally. */
+  #integrated-portfolio .container,
+  #integrated-services .container,
+  #integrated-about .container,
+  #integrated-clients .container {
+    max-width: 100vw !important;
+    box-sizing: border-box !important;
+  }
+}
+</style>
+</body>
 </html>
