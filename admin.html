@@ -425,22 +425,6 @@
     }
 
     /* =========================
-       16:9 FOCAL / CROP SELECTOR
-    ========================= */
-    .crop-editor{margin-top:15px;padding:16px;border:1px solid var(--line);border-radius:14px;background:#101010}
-    .crop-frame{position:relative;width:100%;max-width:620px;aspect-ratio:16/9;margin:0 auto;overflow:hidden;border:1px solid #444;background:#050505}
-    .crop-frame img,.crop-frame video{width:100%;height:100%;object-fit:cover;display:block}
-    .crop-frame::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,transparent 49.8%,rgba(214,173,85,.5) 50%,transparent 50.2%),linear-gradient(0deg,transparent 49.8%,rgba(214,173,85,.5) 50%,transparent 50.2%)}
-    .crop-controls{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
-    .crop-controls label{margin:0;text-transform:none;letter-spacing:0;color:#aaa}
-    .crop-controls input[type=range]{padding:0;accent-color:var(--gold)}
-    .crop-value{color:var(--gold);font-weight:700}
-    .crop-presets{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}
-    .crop-presets button{border:1px solid var(--line);background:#1b1b1b;color:#ddd;border-radius:8px;padding:7px 9px;font-size:11px}
-    .crop-presets button:hover{border-color:var(--gold);color:#fff}
-    @media(max-width:850px){.crop-controls{grid-template-columns:1fr}}
-
-    /* =========================
        SECTION HEADER
     ========================= */
 
@@ -483,6 +467,25 @@
     .gallery-preview-item button{
       position:absolute;top:4px;right:4px;width:25px;height:25px;border:0;border-radius:50%;background:rgba(0,0,0,.8);color:#fff
     }
+    .ai-face-badge{
+      position:absolute;
+      left:6px;
+      bottom:6px;
+      padding:4px 7px;
+      border-radius:999px;
+      background:rgba(10,10,10,.86);
+      border:1px solid rgba(214,173,85,.7);
+      color:var(--gold);
+      font-size:10px;
+      line-height:1;
+      pointer-events:none;
+    }
+    .ai-face-note{
+      margin-top:10px;
+      color:#c9ad72;
+      font-size:12px;
+      line-height:1.5;
+    }
     .card .thumbs{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin:10px 0 12px}
     .card .thumbs img{height:55px;border-radius:5px}
 
@@ -524,60 +527,7 @@
         flex-direction: column;
       }
     }
-  
-
-/* =====================================================
-   ADMIN MOBILE OPTIMIZATION PATCH — 2026-09-08
-===================================================== */
-@media (max-width: 850px) {
-  html, body { overflow-x:hidden; }
-  .app { width:100%; grid-template-columns:1fr; }
-  .sidebar {
-    width:100%; padding:14px 12px 12px;
-    position:relative; height:auto;
-  }
-  .logo { font-size:20px; margin:2px 4px 12px; }
-  .sidebar .navbtn {
-    width:100%; margin:2px 0; padding:10px 8px;
-    font-size:12px; text-align:center;
-  }
-  .sidebar {
-    display:flex; flex-wrap:wrap; gap:4px;
-    align-items:center;
-  }
-  .sidebar .logo { flex:0 0 100%; }
-  .sidebar .navbtn { flex:1 1 calc(33.333% - 4px); }
-  .sidebar .logout { flex:1 1 100%; margin-top:7px; position:static; }
-  .main { width:100%; max-width:none; padding:14px 11px 30px; }
-  .topbar { margin-bottom:14px; }
-  .topbar h1 { font-size:28px; }
-  .panel { padding:15px; border-radius:14px; }
-  .grid, .grid3 { grid-template-columns:1fr; gap:12px; }
-  .cards { grid-template-columns:1fr; gap:12px; }
-  .card img { height:200px; }
-  .actions { width:100%; }
-  .actions .btn { flex:1 1 auto; min-height:42px; }
-  .drop { padding:18px 12px; }
-  .crop-editor { padding:11px; }
-  .crop-frame { width:100%; max-width:none; }
-  .crop-controls { grid-template-columns:1fr; gap:10px; }
-  .crop-presets { display:grid; grid-template-columns:repeat(3,1fr); gap:6px; }
-  .crop-presets button { min-height:38px; padding:6px 4px; }
-  input, textarea, select { font-size:16px; }
-  .gallery-preview { grid-template-columns:repeat(3,minmax(0,1fr)); gap:7px; }
-  .gallery-preview img, .gallery-preview video { width:100%; height:78px; object-fit:cover; }
-}
-
-@media (max-width: 480px) {
-  .sidebar .navbtn { flex-basis:calc(50% - 4px); }
-  .topbar h1 { font-size:25px; }
-  .user { max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-  .panel { padding:12px; }
-  .card img { height:180px; }
-  .gallery-preview { grid-template-columns:repeat(2,minmax(0,1fr)); }
-}
-
-</style>
+  </style>
 </head>
 
 
@@ -774,23 +724,21 @@
     } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
 
 
-    /* =========================
-       INLINE PROJECT CONFIG
-       No local firebase-config.js required.
-    ========================= */
+    /*
+     * Your configuration file.
+     *
+     * firebase-config.js should contain:
+     *
+     * firebaseConfig
+     * CLOUDINARY_CLOUD_NAME
+     * CLOUDINARY_UPLOAD_PRESET
+     */
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyBwgyxowI9pRCUL0kTObq5dmNxq3R0_N9I",
-      authDomain: "lighthouse-admin-c54b5.firebaseapp.com",
-      projectId: "lighthouse-admin-c54b5",
-      storageBucket: "lighthouse-admin-c54b5.firebasestorage.app",
-      messagingSenderId: "880621440582",
-      appId: "1:880621440582:web:796538aaeffd31b6d0c447",
-      measurementId: "G-DZN3LQ9CXF"
-    };
-
-    const CLOUDINARY_CLOUD_NAME = "wm4baarl";
-    const CLOUDINARY_UPLOAD_PRESET = "portfolio_upload";
+    import {
+      firebaseConfig,
+      CLOUDINARY_CLOUD_NAME,
+      CLOUDINARY_UPLOAD_PRESET
+    } from "./firebase-config.js";
 
 
     /* =========================
@@ -819,12 +767,8 @@
 
     let portfolioItems = [];
 
-    // Portfolio editor state
+    // Currently edited portfolio event. null means "create new event".
     let editingEventId = null;
-    let selectedGalleryFiles = [];
-    let galleryToDelete = new Set();
-    let mainObjectPosition = "50% 50%";
-    let mainMediaType = "image";
 
 
     /* =========================
@@ -1125,7 +1069,21 @@
        RENDER
     ========================= */
 
-    async function render(tab) {
+    /*
+     * Render requests are queued so a slow Dashboard/Firestore request
+     * cannot finish after a newer tab and overwrite its content.
+     */
+    let renderQueue = Promise.resolve();
+
+    function render(tab) {
+      renderQueue = renderQueue
+        .catch(() => {})
+        .then(() => renderTab(tab));
+
+      return renderQueue;
+    }
+
+    async function renderTab(tab) {
 
       const titles = {
 
@@ -1369,23 +1327,23 @@
 
           <div class="grid">
             <div>
-              <label>Main Event Media — 16:9</label>
+              <label>Main Event Image — 16:9</label>
               <div class="drop">
-                <label for="pMainFile">Choose Main Image / Video</label>
-                <input id="pMainFile" type="file" accept="image/jpeg,image/png,image/webp,video/mp4">
-                <div id="mainFileName" class="muted">JPG, PNG, WEBP or MP4</div>
+                <label for="pMainFile">Choose Main Image</label>
+                <input id="pMainFile" type="file" accept="image/jpeg,image/png,image/webp">
+                <div id="mainFileName" class="muted">JPG, PNG or WEBP</div>
                 <div id="mainPreview" class="preview"></div>
               </div>
-              <div id="cropEditorArea"></div>
             </div>
 
             <div>
-              <label>Event Gallery Media</label>
+              <label>Event Gallery Images</label>
               <div class="drop">
-                <label for="pGalleryFiles">Choose Multiple Images / Videos</label>
-                <input id="pGalleryFiles" type="file" multiple accept="image/jpeg,image/png,image/webp,video/mp4">
-                <div id="galleryFileName" class="muted">Select multiple JPG, PNG, WEBP or MP4 files</div>
+                <label for="pGalleryFiles">Choose Multiple Images</label>
+                <input id="pGalleryFiles" type="file" multiple accept="image/jpeg,image/png,image/webp">
+                <div id="galleryFileName" class="muted">Select multiple JPG, PNG or WEBP files</div>
                 <div id="galleryPreview" class="gallery-preview"></div>
+                <div class="ai-face-note">AI face-aware cropping is enabled on the event gallery. Uploaded photos are automatically framed around detected faces — no manual cropping is required.</div>
               </div>
             </div>
           </div>
@@ -1414,11 +1372,11 @@
               const gallery = normalizePortfolioGallery(item);
               return `
                 <article class="card">
-                  ${main ? (item.mainMediaType === "video" ? `<video src="${esc(main)}" muted playsinline controls style="width:100%;height:170px;object-fit:cover;display:block;background:#222"></video>` : `<img src="${esc(main)}" alt="${esc(item.title || "Portfolio event")}" loading="lazy" style="object-position:${esc(normalizeObjectPosition(item.mainObjectPosition))}">`) : `<div style="height:170px;display:grid;place-items:center;color:#666">No main media</div>`}
+                  ${main ? `<img src="${esc(main)}" alt="${esc(item.title || "Portfolio event")}" loading="lazy">` : `<div style="height:170px;display:grid;place-items:center;color:#666">No main image</div>`}
                   <div class="card-body">
                     <h3>${esc(item.title || "Untitled Event")}</h3>
                     <p>${esc(item.description || "")}</p>
-                    ${gallery.length ? `<div class="thumbs">${gallery.slice(0,4).map(photo => photo.mediaType === "video" ? `<video src="${esc(photo.imageUrl)}" muted playsinline style="width:100%;height:55px;object-fit:cover;border-radius:5px"></video>` : `<img src="${esc(photo.imageUrl)}" alt="Gallery image" loading="lazy">`).join("")}</div>` : ""}
+                    ${gallery.length ? `<div class="thumbs">${gallery.slice(0,4).map(photo => `<img src="${esc(photo.imageUrl)}" alt="Gallery image" loading="lazy">`).join("")}</div>` : ""}
                     <div class="actions">
                       <button class="btn secondary small" data-event-edit="${esc(item.id)}" type="button">Edit Event</button>
                       <button class="btn danger small" data-event-delete="${esc(item.id)}" type="button">Delete Event</button>
@@ -1441,11 +1399,8 @@
           $("pDesc").value = item.description || "";
           renderExistingGallery(item);
           if (item.mainImageUrl || item.imageUrl) {
-            mainMediaType = inferMediaType(item.mainMediaType, item.mainImageUrl || item.imageUrl);
-            mainObjectPosition = normalizeObjectPosition(item.mainObjectPosition);
-            renderMainMediaPreview(item.mainImageUrl || item.imageUrl, mainMediaType, mainObjectPosition, true);
-            $("mainFileName").textContent = `Current main ${mainMediaType === "video" ? "video" : "image"} — choose a new file to replace it`;
-            if (mainMediaType === "image") renderCropEditor(item.mainImageUrl || item.imageUrl, mainObjectPosition);
+            $("mainPreview").innerHTML = `<img src="${esc(item.mainImageUrl || item.imageUrl)}" alt="Current main image">`;
+            $("mainFileName").textContent = "Current main image — choose a new file to replace it";
           }
         }
       }
@@ -1475,26 +1430,25 @@
       return [];
     }
 
+    let selectedGalleryFiles = [];
+    let galleryToDelete = new Set();
+
     function setupPortfolioForm() {
       $("pMainFile").addEventListener("change",event => {
         const file = event.target.files[0];
-        mainMediaType = file?.type === "video/mp4" ? "video" : "image";
-        mainObjectPosition = "50% 50%";
-        $("mainFileName").textContent = file?.name || "JPG, PNG, WEBP or MP4";
+        $("mainFileName").textContent = file?.name || "JPG, PNG or WEBP";
         $("mainPreview").innerHTML = "";
-        $("cropEditorArea").innerHTML = "";
         if (file) {
           const url = URL.createObjectURL(file);
-          renderMainMediaPreview(url, mainMediaType, mainObjectPosition, false);
-          if (mainMediaType === "image") renderCropEditor(url, mainObjectPosition);
+          $("mainPreview").innerHTML = `<img src="${url}" alt="Main image preview">`;
         }
       });
 
       $("pGalleryFiles").addEventListener("change",event => {
         selectedGalleryFiles = Array.from(event.target.files || []);
         $("galleryFileName").textContent = selectedGalleryFiles.length
-          ? `${selectedGalleryFiles.length} media file(s) selected`
-          : "Select multiple JPG, PNG, WEBP or MP4 files";
+          ? `${selectedGalleryFiles.length} image(s) selected`
+          : "Select multiple JPG, PNG or WEBP files";
         renderNewGalleryPreview();
       });
 
@@ -1517,14 +1471,13 @@
         const url = URL.createObjectURL(file);
         const item = document.createElement("div");
         item.className = "gallery-preview-item";
-        const isVideo = file.type === "video/mp4";
-        item.innerHTML = `${isVideo ? `<video src="${url}" muted playsinline controls style="width:100%;height:85px;object-fit:cover;border-radius:8px;border:1px solid var(--line);display:block"></video>` : `<img src="${url}" alt="New gallery image ${index + 1}">`}<button type="button" aria-label="Remove media">&times;</button>`;
+        item.innerHTML = `<img src="${url}" alt="New gallery image ${index + 1}"><button type="button" aria-label="Remove image">&times;</button>`;
         item.querySelector("button").addEventListener("click",() => {
           selectedGalleryFiles.splice(index,1);
           renderNewGalleryPreview();
           $("galleryFileName").textContent = selectedGalleryFiles.length
-            ? `${selectedGalleryFiles.length} media file(s) selected`
-            : "Select multiple JPG, PNG, WEBP or MP4 files";
+            ? `${selectedGalleryFiles.length} image(s) selected`
+            : "Select multiple JPG, PNG or WEBP files";
         });
         area.appendChild(item);
       });
@@ -1539,8 +1492,8 @@
           <div class="gallery-preview" id="existingGalleryPreview">
             ${gallery.map((photo,index) => `
               <div class="gallery-preview-item" data-existing-gallery="${index}">
-                ${inferMediaType(photo.mediaType,photo.imageUrl) === "video" ? `<video src="${esc(photo.imageUrl)}" muted playsinline controls style="width:100%;height:85px;object-fit:cover;border-radius:8px;border:1px solid var(--line);display:block"></video>` : `<img src="${esc(photo.imageUrl)}" alt="Existing gallery image">`}
-                <button type="button" aria-label="Remove this gallery media" data-remove-gallery="${index}">&times;</button>
+                <img src="${esc(photo.imageUrl)}" alt="Existing gallery image">
+                <button type="button" aria-label="Remove this gallery image" data-remove-gallery="${index}">&times;</button>
               </div>
             `).join("")}
           </div>
@@ -1557,86 +1510,90 @@
       });
     }
 
-    async function uploadPortfolioMedia(file) {
+    function parseDetectedFaces(value) {
+      if (!value) return [];
+
+      if (Array.isArray(value)) {
+        if (value.length && Array.isArray(value[0])) {
+          return value
+            .filter(face => face.length >= 4)
+            .map(face => face.slice(0,4).map(Number))
+            .filter(face => face.every(Number.isFinite));
+        }
+
+        if (value.length >= 4 && value.every(v => Number.isFinite(Number(v)))) {
+          const faces = [];
+          for (let i = 0; i + 3 < value.length; i += 4) {
+            const face = value.slice(i,i + 4).map(Number);
+            if (face.every(Number.isFinite)) faces.push(face);
+          }
+          return faces;
+        }
+      }
+
+      if (typeof value === "string") {
+        return value.split("|")
+          .map(part => part.split(",").map(Number))
+          .filter(face => face.length >= 4 && face.slice(0,4).every(Number.isFinite))
+          .map(face => face.slice(0,4));
+      }
+
+      return [];
+    }
+
+    function calculateFaceObjectPosition(faces,width,height) {
+      if (!faces.length || !width || !height) return "50% 50%";
+
+      // Use the union of all detected faces so group photographs keep the
+      // group near the visible crop instead of focusing on only one person.
+      const minX = Math.min(...faces.map(face => face[0]));
+      const minY = Math.min(...faces.map(face => face[1]));
+      const maxX = Math.max(...faces.map(face => face[0] + face[2]));
+      const maxY = Math.max(...faces.map(face => face[1] + face[3]));
+
+      const centerX = (minX + maxX) / 2;
+      const centerY = (minY + maxY) / 2;
+
+      const x = Math.max(0,Math.min(100,(centerX / width) * 100));
+      const y = Math.max(0,Math.min(100,(centerY / height) * 100));
+
+      return `${x.toFixed(2)}% ${y.toFixed(2)}%`;
+    }
+
+    async function uploadPortfolioImage(file) {
       if (!file) return null;
-      const isVideo = file.type === "video/mp4";
-      const allowedTypes = ["image/jpeg","image/png","image/webp","video/mp4"];
-      if (!allowedTypes.includes(file.type)) throw new Error("Only JPG, PNG, WEBP and MP4 files are allowed.");
-      const maxSize = isVideo ? 100 * 1024 * 1024 : 15 * 1024 * 1024;
-      if (file.size > maxSize) throw new Error(`${isVideo ? "MP4 video" : "Image"} must be smaller than ${isVideo ? "100 MB" : "15 MB"}.`);
+      const allowedTypes = ["image/jpeg","image/png","image/webp"];
+      if (!allowedTypes.includes(file.type)) throw new Error("Only JPG, PNG and WEBP images are allowed.");
+      if (file.size > 15 * 1024 * 1024) throw new Error("Each image must be smaller than 15 MB.");
 
       const formData = new FormData();
       formData.append("file",file);
       formData.append("upload_preset",CLOUDINARY_UPLOAD_PRESET);
+      // Face-aware cropping is handled at delivery time by Cloudinary's
+      // built-in g_faces transformation in event-gallery.html.
 
-      const resourceType = isVideo ? "video" : "image";
-      const uploadUrl = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/${resourceType}/upload`;
+      const uploadUrl = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`;
       const response = await fetch(uploadUrl,{method:"POST",body:formData});
       const result = await response.json();
       if (!response.ok) throw new Error(result?.error?.message || "Cloudinary upload failed.");
 
+      // The unsigned upload response does not expose face analysis unless the
+      // Cloudinary upload preset is configured to request it. We therefore keep
+      // the upload metadata compatible and let event-gallery.html perform the
+      // actual AI face-aware crop at delivery time.
+      const faces = parseDetectedFaces(result.faces);
+      const width = Number(result.width) || 0;
+      const height = Number(result.height) || 0;
+
       return {
         imageUrl:result.secure_url,
         cloudinaryPublicId:result.public_id || "",
-        mediaType:isVideo ? "video" : "image"
+        faceCoordinates:faces,
+        faceCount:faces.length,
+        objectPosition:calculateFaceObjectPosition(faces,width,height),
+        width,
+        height
       };
-    }
-
-    function inferMediaType(value, url="") {
-      if (value === "video" || value === "image") return value;
-      return /\.mp4(?:[?#]|$)/i.test(String(url)) ? "video" : "image";
-    }
-
-    function normalizeObjectPosition(value) {
-      const match = String(value || "50% 50%").match(/^(\d{1,3})%\s+(\d{1,3})%$/);
-      if (!match) return "50% 50%";
-      return `${Math.min(100,Number(match[1]))}% ${Math.min(100,Number(match[2]))}%`;
-    }
-
-    function renderMainMediaPreview(url, mediaType="image", objectPosition="50% 50%", current=false) {
-      const area = $("mainPreview");
-      if (!area || !url) return;
-      const safePosition = normalizeObjectPosition(objectPosition);
-      area.innerHTML = mediaType === "video"
-        ? `<video src="${esc(url)}" ${current ? "" : "controls"} muted playsinline style="width:280px;max-width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:10px;border:1px solid var(--line);display:block"></video>`
-        : `<img src="${esc(url)}" alt="Main image preview" style="width:280px;max-width:100%;aspect-ratio:16/9;object-fit:cover;object-position:${safePosition};border-radius:10px;border:1px solid var(--line);display:block">`;
-    }
-
-    function renderCropEditor(url, position="50% 50%") {
-      const area = $("cropEditorArea");
-      if (!area || !url) return;
-      const safe = normalizeObjectPosition(position);
-      const [x,y] = safe.replace(/%/g,"").split(/\s+/).map(Number);
-      area.innerHTML = `
-        <div class="crop-editor">
-          <div class="muted" style="margin-bottom:10px"><strong style="color:#fff">16:9 crop selector</strong> — choose exactly which part of the image is visible on the website. Dragging is not required; use the focal controls below.</div>
-          <div class="crop-frame"><img id="cropImage" src="${esc(url)}" alt="16:9 crop preview" style="object-position:${x}% ${y}%"></div>
-          <div class="crop-controls">
-            <label>Horizontal focus <span id="cropXValue" class="crop-value">${x}%</span><input id="cropX" type="range" min="0" max="100" step="1" value="${x}"></label>
-            <label>Vertical focus <span id="cropYValue" class="crop-value">${y}%</span><input id="cropY" type="range" min="0" max="100" step="1" value="${y}"></label>
-          </div>
-          <div class="crop-presets">
-            <button type="button" data-crop="0 0">Top Left</button><button type="button" data-crop="50 0">Top</button><button type="button" data-crop="100 0">Top Right</button>
-            <button type="button" data-crop="0 50">Left</button><button type="button" data-crop="50 50">Center</button><button type="button" data-crop="100 50">Right</button>
-            <button type="button" data-crop="0 100">Bottom Left</button><button type="button" data-crop="50 100">Bottom</button><button type="button" data-crop="100 100">Bottom Right</button>
-          </div>
-        </div>`;
-
-      const update = () => {
-        const xx = Number($("cropX").value);
-        const yy = Number($("cropY").value);
-        mainObjectPosition = `${xx}% ${yy}%`;
-        $("cropImage").style.objectPosition = mainObjectPosition;
-        $("cropXValue").textContent = `${xx}%`;
-        $("cropYValue").textContent = `${yy}%`;
-        renderMainMediaPreview(url,"image",mainObjectPosition,false);
-      };
-      $("cropX").addEventListener("input",update);
-      $("cropY").addEventListener("input",update);
-      area.querySelectorAll("[data-crop]").forEach(btn => btn.addEventListener("click",()=>{
-        const [xx,yy] = btn.dataset.crop.split(" ").map(Number);
-        $("cropX").value=xx; $("cropY").value=yy; update();
-      }));
     }
 
     async function savePortfolioEvent() {
@@ -1655,14 +1612,20 @@
 
         let mainImageUrl = existing?.mainImageUrl || existing?.imageUrl || "";
         let mainCloudinaryPublicId = existing?.mainCloudinaryPublicId || existing?.cloudinaryPublicId || "";
+        let mainObjectPosition = existing?.mainObjectPosition || "50% 50%";
+        let mainFaceCoordinates = Array.isArray(existing?.mainFaceCoordinates) ? existing.mainFaceCoordinates : [];
+        let mainFaceCount = Number(existing?.mainFaceCount || mainFaceCoordinates.length || 0);
 
         if (mainFile) {
           $("uploadStatus").textContent = "Uploading main event image...";
-          const uploadedMain = await uploadPortfolioMedia(mainFile);
+          const uploadedMain = await uploadPortfolioImage(mainFile);
           mainImageUrl = uploadedMain.imageUrl;
           mainCloudinaryPublicId = uploadedMain.cloudinaryPublicId;
-          mainMediaType = uploadedMain.mediaType;
-          if (mainMediaType === "image") renderCropEditor(mainImageUrl, mainObjectPosition);
+          if (uploadedMain.faceCount > 0) {
+            mainObjectPosition = uploadedMain.objectPosition;
+            mainFaceCoordinates = uploadedMain.faceCoordinates;
+            mainFaceCount = uploadedMain.faceCount;
+          }
         }
 
         if (!mainImageUrl) throw new Error("Choose a main event image.");
@@ -1675,8 +1638,20 @@
         const newGallery = [];
         for (let i=0;i<selectedGalleryFiles.length;i++) {
           $("uploadStatus").textContent = `Uploading gallery image ${i+1} of ${selectedGalleryFiles.length}...`;
-          const uploaded = await uploadPortfolioMedia(selectedGalleryFiles[i]);
-          newGallery.push({imageUrl:uploaded.imageUrl,cloudinaryPublicId:uploaded.cloudinaryPublicId,mediaType:uploaded.mediaType,createdAt:Date.now()});
+          const uploaded = await uploadPortfolioImage(selectedGalleryFiles[i]);
+          const galleryPhoto = {
+            imageUrl:uploaded.imageUrl,
+            cloudinaryPublicId:uploaded.cloudinaryPublicId,
+            createdAt:Date.now()
+          };
+          // If face coordinates are returned by a configured Cloudinary preset,
+          // keep them. Otherwise event-gallery.html uses g_faces automatically.
+          if (uploaded.faceCount > 0) {
+            galleryPhoto.objectPosition = uploaded.objectPosition;
+            galleryPhoto.faceCoordinates = uploaded.faceCoordinates;
+            galleryPhoto.faceCount = uploaded.faceCount;
+          }
+          newGallery.push(galleryPhoto);
         }
 
         const payload = {
@@ -1685,9 +1660,10 @@
           description,
           mainImageUrl,
           mainCloudinaryPublicId,
+          mainObjectPosition,
+          mainFaceCoordinates,
+          mainFaceCount,
           gallery:[...existingGallery,...newGallery],
-          mainMediaType: mainMediaType,
-          mainObjectPosition: mainMediaType === "image" ? normalizeObjectPosition(mainObjectPosition) : "50% 50%",
           updatedAt:serverTimestamp()
         };
 
@@ -1702,8 +1678,6 @@
         editingEventId = null;
         selectedGalleryFiles = [];
         galleryToDelete.clear();
-        mainObjectPosition = "50% 50%";
-        mainMediaType = "image";
         await portfolio();
       }
       catch (error) {
@@ -2450,7 +2424,7 @@
   <input
     id="backgroundVideoMobile"
     value="${esc(
-      data.mobileBackgroundVideo ||
+      data.backgroundVideoMobile ||
       ""
     )}"
     placeholder="Cloudinary mobile video URL"
@@ -2576,7 +2550,7 @@ $("backgroundVideoFile").addEventListener(
 
         /* Existing video URLs */
         let backgroundVideo = $("backgroundVideo").value.trim();
-        let mobileBackgroundVideo = $("backgroundVideoMobile").value.trim();
+        let backgroundVideoMobile = $("backgroundVideoMobile").value.trim();
 
         const allowedVideoTypes = ["video/mp4", "video/webm", "video/ogg"];
 
@@ -2618,12 +2592,8 @@ $("backgroundVideoFile").addEventListener(
 
         if (mobileVideoFile) {
           $("saveStatus").textContent = "Uploading mobile background video...";
-          mobileBackgroundVideo = await uploadBackgroundVideo(
-  mobileVideoFile,
-  "Mobile background video"
-);
-
-$("backgroundVideoMobile").value = mobileBackgroundVideo;
+          backgroundVideoMobile = await uploadBackgroundVideo(mobileVideoFile, "Mobile background video");
+          $("backgroundVideoMobile").value = backgroundVideoMobile;
         }
 
         if (videoFile || mobileVideoFile) {
@@ -2677,7 +2647,7 @@ $("backgroundVideoMobile").value = mobileBackgroundVideo;
 
             backgroundVideo,
 
-            mobileBackgroundVideo,
+            backgroundVideoMobile,
 
             updatedAt:
               serverTimestamp()
@@ -2821,10 +2791,10 @@ $("backgroundVideoMobile").value = mobileBackgroundVideo;
 
       `);
 
+      
     }
 
+    
   </script>
-
-</body>
-
+</body>  
 </html>
