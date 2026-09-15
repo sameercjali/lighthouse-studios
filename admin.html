@@ -1,0 +1,2800 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Studio Admin</title>
+
+  <style>
+    :root {
+      --bg: #0b0b0b;
+      --panel: #141414;
+      --panel2: #1b1b1b;
+      --line: #2a2a2a;
+      --text: #f5f5f5;
+      --muted: #999;
+      --gold: #d6ad55;
+      --danger: #e25d5d;
+      --success: #8ed7a5;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family:
+        Inter,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+    }
+
+    button,
+    input,
+    textarea,
+    select {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* =========================
+       LOGIN
+    ========================= */
+
+    .login {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+
+      background:
+        radial-gradient(
+          circle at 50% 20%,
+          #29200e 0,
+          #0b0b0b 45%
+        );
+    }
+
+    .login-card {
+      width: min(430px, 100%);
+      background: rgba(20, 20, 20, 0.96);
+      border: 1px solid var(--line);
+      padding: 34px;
+      border-radius: 22px;
+
+      box-shadow:
+        0 30px 100px rgba(0, 0, 0, 0.7);
+    }
+
+    .brand {
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--gold);
+      font-size: 12px;
+    }
+
+    .login h1 {
+      font-family: Georgia, serif;
+      font-size: 42px;
+      margin: 12px 0 8px;
+    }
+
+    .login p {
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    label {
+      display: block;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: #aaa;
+      margin: 18px 0 7px;
+    }
+
+    input,
+    textarea,
+    select {
+      width: 100%;
+      background: #0e0e0e;
+      color: #fff;
+
+      border: 1px solid var(--line);
+      border-radius: 10px;
+
+      padding: 12px;
+      outline: none;
+    }
+
+    textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    input:focus,
+    textarea:focus,
+    select:focus {
+      border-color: var(--gold);
+    }
+
+    .btn {
+      border: 0;
+      border-radius: 10px;
+
+      padding: 11px 15px;
+
+      background: var(--gold);
+      color: #111;
+
+      font-weight: 800;
+    }
+
+    .btn:hover {
+      filter: brightness(1.08);
+    }
+
+    .btn.secondary {
+      background: #252525;
+      color: #fff;
+    }
+
+    .btn.danger {
+      background: var(--danger);
+      color: #fff;
+    }
+
+    .btn.small {
+      padding: 8px 11px;
+      font-size: 12px;
+    }
+
+    .login .btn {
+      width: 100%;
+      margin-top: 20px;
+    }
+
+    .error {
+      color: #ff8b8b;
+      margin-top: 12px;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    /* =========================
+       ADMIN APP
+    ========================= */
+
+    .app {
+      display: grid;
+      grid-template-columns: 250px 1fr;
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      border-right: 1px solid var(--line);
+      background: #0f0f0f;
+
+      padding: 24px;
+
+      position: sticky;
+      top: 0;
+
+      height: 100vh;
+    }
+
+    .logo {
+      font-family: Georgia, serif;
+      font-size: 25px;
+      margin: 4px 0 30px;
+    }
+
+    .logo span {
+      color: var(--gold);
+    }
+
+    .navbtn {
+      width: 100%;
+      text-align: left;
+
+      background: transparent;
+      color: #bbb;
+
+      border: 0;
+
+      padding: 12px;
+      border-radius: 9px;
+
+      margin: 3px 0;
+    }
+
+    .navbtn.active,
+    .navbtn:hover {
+      background: #1d1d1d;
+      color: #fff;
+    }
+
+    .sidebar .logout {
+      position: absolute;
+      bottom: 24px;
+      left: 24px;
+      right: 24px;
+    }
+
+    .main {
+      padding: 30px;
+      max-width: 1500px;
+      width: 100%;
+      margin: auto;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      margin-bottom: 25px;
+    }
+
+    .topbar h1 {
+      font-family: Georgia, serif;
+      font-size: 38px;
+      margin: 0;
+    }
+
+    .user {
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    /* =========================
+       PANELS
+    ========================= */
+
+    .panel {
+      background: var(--panel);
+
+      border: 1px solid var(--line);
+      border-radius: 18px;
+
+      padding: 22px;
+      margin-bottom: 20px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+      gap: 18px;
+    }
+
+    .grid3 {
+      display: grid;
+      grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+
+      gap: 18px;
+    }
+
+    .actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .muted {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .status {
+      margin: 10px 0;
+      color: var(--success);
+      font-size: 13px;
+      min-height: 20px;
+    }
+
+    /* =========================
+       CARDS
+    ========================= */
+
+    .cards {
+      display: grid;
+
+      grid-template-columns:
+        repeat(
+          auto-fill,
+          minmax(240px, 1fr)
+        );
+
+      gap: 16px;
+    }
+
+    .card {
+      border: 1px solid var(--line);
+      background: #111;
+
+      border-radius: 14px;
+      overflow: hidden;
+    }
+
+    .card img {
+      width: 100%;
+      height: 170px;
+
+      object-fit: cover;
+      display: block;
+
+      background: #222;
+    }
+
+    .card-body {
+      padding: 13px;
+    }
+
+    .card h3 {
+      margin: 0 0 6px;
+      font-size: 16px;
+    }
+
+    .card p {
+      margin: 0 0 12px;
+
+      color: #999;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    /* =========================
+       DROP AREA
+    ========================= */
+
+    .drop {
+      border: 1px dashed #555;
+      border-radius: 14px;
+
+      padding: 25px;
+      text-align: center;
+
+      background: #101010;
+    }
+
+    .drop input {
+      display: none;
+    }
+
+    .drop label {
+      display: inline-block;
+
+      margin: 0;
+
+      text-transform: none;
+      letter-spacing: 0;
+
+      color: #fff;
+      background: #242424;
+
+      padding: 11px 15px;
+      border-radius: 9px;
+
+      cursor: pointer;
+    }
+
+    .drop label:hover {
+      background: #303030;
+    }
+
+    /* =========================
+       PREVIEW
+    ========================= */
+
+    .preview {
+      margin-top: 15px;
+    }
+
+    .preview img {
+      width: 180px;
+      height: 120px;
+
+      object-fit: cover;
+
+      border-radius: 10px;
+      border: 1px solid var(--line);
+    }
+
+    /* =========================
+       SECTION HEADER
+    ========================= */
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 15px;
+    }
+
+    .section-header h2 {
+      margin: 0;
+    }
+
+
+    /* =========================
+       EVENT PORTFOLIO EDITOR
+    ========================= */
+    .event-form-note{
+      border-left:3px solid var(--gold);
+      padding:10px 13px;
+      background:#19160f;
+      color:#bbb;
+      font-size:13px;
+      line-height:1.55;
+      margin:15px 0;
+    }
+    .divider{height:1px;background:var(--line);margin:22px 0}
+    .gallery-preview{
+      display:grid;
+      grid-template-columns:repeat(auto-fill,minmax(110px,1fr));
+      gap:10px;
+      margin-top:15px;
+    }
+    .gallery-preview-item{position:relative}
+    .gallery-preview img{
+      width:100%;height:85px;object-fit:cover;border-radius:8px;border:1px solid var(--line);display:block
+    }
+    .gallery-preview-item button{
+      position:absolute;top:4px;right:4px;width:25px;height:25px;border:0;border-radius:50%;background:rgba(0,0,0,.8);color:#fff
+    }
+    .ai-face-badge{
+      position:absolute;
+      left:6px;
+      bottom:6px;
+      padding:4px 7px;
+      border-radius:999px;
+      background:rgba(10,10,10,.86);
+      border:1px solid rgba(214,173,85,.7);
+      color:var(--gold);
+      font-size:10px;
+      line-height:1;
+      pointer-events:none;
+    }
+    .ai-face-note{
+      margin-top:10px;
+      color:#c9ad72;
+      font-size:12px;
+      line-height:1.5;
+    }
+    .card .thumbs{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin:10px 0 12px}
+    .card .thumbs img{height:55px;border-radius:5px}
+
+    /* =========================
+       RESPONSIVE
+    ========================= */
+
+    @media (max-width: 850px) {
+
+      .app {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        position: relative;
+        height: auto;
+
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .sidebar .logout {
+        position: static;
+        margin-top: 15px;
+      }
+
+      .grid,
+      .grid3 {
+        grid-template-columns: 1fr;
+      }
+
+      .main {
+        padding: 18px;
+      }
+
+      .topbar {
+        align-items: flex-start;
+        gap: 10px;
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+
+
+<body>
+
+  <!-- =========================
+       LOGIN
+  ========================= -->
+
+  <div id="login" class="login">
+
+    <div class="login-card">
+
+      <div class="brand">
+        CREATIVE STUDIO
+      </div>
+
+      <h1>Admin</h1>
+
+      <p>
+        Private control panel for your portfolio website.
+      </p>
+
+      <label for="email">
+        Email
+      </label>
+
+      <input
+        id="email"
+        type="email"
+        placeholder="admin@email.com"
+        autocomplete="username"
+      >
+
+      <label for="password">
+        Password
+      </label>
+
+      <input
+        id="password"
+        type="password"
+        placeholder="••••••••"
+        autocomplete="current-password"
+      >
+
+      <button
+        class="btn"
+        id="loginBtn"
+        type="button"
+      >
+        Sign in
+      </button>
+
+      <div
+        id="loginError"
+        class="error"
+      ></div>
+
+    </div>
+
+  </div>
+
+
+  <!-- =========================
+       ADMIN APP
+  ========================= -->
+
+  <div id="app" class="app hidden">
+
+    <aside class="sidebar">
+
+      <div class="logo">
+        STUDIO<span>.</span>
+      </div>
+
+      <button
+        class="navbtn active"
+        data-tab="dashboard"
+      >
+        Dashboard
+      </button>
+
+      <button
+        class="navbtn"
+        data-tab="portfolio"
+      >
+        Portfolio
+      </button>
+
+      <button
+        class="navbtn"
+        data-tab="about"
+      >
+        About Us
+      </button>
+
+      <button
+        class="navbtn"
+        data-tab="services"
+      >
+        Services
+      </button>
+
+      <button
+        class="navbtn"
+        data-tab="clients"
+      >
+        Our Clients
+      </button>
+
+      <button
+        class="navbtn"
+        data-tab="settings"
+      >
+        Website Settings
+      </button>
+
+      <button
+        class="navbtn"
+        data-tab="media"
+      >
+        Media
+      </button>
+
+      <button
+        class="btn secondary logout"
+        id="logoutBtn"
+        type="button"
+      >
+        Sign out
+      </button>
+
+    </aside>
+
+
+    <main class="main">
+
+      <div class="topbar">
+
+        <h1 id="pageTitle">
+          Dashboard
+        </h1>
+
+        <div
+          class="user"
+          id="userEmail"
+        ></div>
+
+      </div>
+
+      <div id="contentArea"></div>
+
+    </main>
+
+  </div>
+
+
+  <!-- =========================
+       FIREBASE + CLOUDINARY
+  ========================= -->
+
+  <script type="module">
+
+    /* =========================
+       FIREBASE IMPORTS
+    ========================= */
+
+    import {
+      initializeApp
+    } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js";
+
+
+    import {
+      getAuth,
+      signInWithEmailAndPassword,
+      onAuthStateChanged,
+      signOut
+    } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js";
+
+
+    import {
+      getFirestore,
+      collection,
+      doc,
+      getDoc,
+      getDocs,
+      addDoc,
+      setDoc,
+      updateDoc,
+      deleteDoc,
+      serverTimestamp,
+      orderBy,
+      query
+    } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
+
+
+    /*
+     * Your configuration file.
+     *
+     * firebase-config.js should contain:
+     *
+     * firebaseConfig
+     * CLOUDINARY_CLOUD_NAME
+     * CLOUDINARY_UPLOAD_PRESET
+     */
+
+    import {
+      firebaseConfig,
+      CLOUDINARY_CLOUD_NAME,
+      CLOUDINARY_UPLOAD_PRESET
+    } from "./firebase-config.js";
+
+
+    /* =========================
+       INITIALIZE FIREBASE
+    ========================= */
+
+    const app =
+      initializeApp(firebaseConfig);
+
+    const auth =
+      getAuth(app);
+
+    const db =
+      getFirestore(app);
+
+
+    /* =========================
+       HELPERS
+    ========================= */
+
+    const $ = id =>
+      document.getElementById(id);
+
+
+    let currentTab = "dashboard";
+
+    let portfolioItems = [];
+
+    // Currently edited portfolio event. null means "create new event".
+    let editingEventId = null;
+
+
+    /* =========================
+       LOGIN
+    ========================= */
+
+    $("loginBtn").addEventListener(
+      "click",
+      async () => {
+
+        $("loginError").textContent = "";
+
+        const email =
+          $("email").value.trim();
+
+        const password =
+          $("password").value;
+
+
+        if (!email || !password) {
+
+          $("loginError").textContent =
+            "Enter your email and password.";
+
+          return;
+        }
+
+
+        try {
+
+          $("loginBtn").disabled = true;
+
+          $("loginBtn").textContent =
+            "Signing in...";
+
+
+          await signInWithEmailAndPassword(
+            auth,
+            email,
+            password
+          );
+
+        }
+
+        catch (error) {
+
+          console.error(error);
+
+          $("loginError").textContent =
+            getFirebaseError(error);
+
+        }
+
+        finally {
+
+          $("loginBtn").disabled = false;
+
+          $("loginBtn").textContent =
+            "Sign in";
+
+        }
+
+      }
+    );
+
+
+    /* ENTER KEY LOGIN */
+
+    $("password").addEventListener(
+      "keydown",
+      event => {
+
+        if (event.key === "Enter") {
+
+          $("loginBtn").click();
+
+        }
+
+      }
+    );
+
+
+    /* FIREBASE ERROR CLEANUP */
+
+    function getFirebaseError(error) {
+
+      const code =
+        error?.code || "";
+
+
+      const messages = {
+
+        "auth/invalid-credential":
+          "Incorrect email or password.",
+
+        "auth/invalid-email":
+          "Please enter a valid email address.",
+
+        "auth/user-not-found":
+          "No account exists with this email.",
+
+        "auth/wrong-password":
+          "Incorrect password.",
+
+        "auth/too-many-requests":
+          "Too many attempts. Please wait and try again.",
+
+        "auth/network-request-failed":
+          "Network error. Check your internet connection."
+
+      };
+
+
+      return (
+        messages[code] ||
+        error?.message ||
+        "Unable to sign in."
+      );
+
+    }
+
+
+    /* =========================
+       LOGOUT
+    ========================= */
+
+    $("logoutBtn").addEventListener(
+      "click",
+      async () => {
+
+        await signOut(auth);
+
+      }
+    );
+
+
+    /* =========================
+       AUTH STATE
+    ========================= */
+
+    onAuthStateChanged(
+      auth,
+      async user => {
+
+        if (!user) {
+
+          $("login")
+            .classList
+            .remove("hidden");
+
+          $("app")
+            .classList
+            .add("hidden");
+
+          return;
+        }
+
+
+        try {
+
+          /*
+           * Check admin document.
+           *
+           * Firestore:
+           *
+           * admins
+           *   └── USER_UID
+           *          └── admin: true
+           */
+
+          const adminSnap =
+            await getDoc(
+              doc(
+                db,
+                "admins",
+                user.uid
+              )
+            );
+
+
+          if (
+            !adminSnap.exists() ||
+            adminSnap.data().admin !== true
+          ) {
+
+            await signOut(auth);
+
+            $("loginError").textContent =
+              "This account is not an administrator.";
+
+            return;
+          }
+
+
+          $("login")
+            .classList
+            .add("hidden");
+
+          $("app")
+            .classList
+            .remove("hidden");
+
+          $("userEmail").textContent =
+            user.email || "";
+
+
+          await render(currentTab);
+
+        }
+
+        catch (error) {
+
+          console.error(error);
+
+          $("loginError").textContent =
+            error.message;
+
+          await signOut(auth);
+
+        }
+
+      }
+    );
+
+
+    /* =========================
+       ADMIN NAVIGATION
+    ========================= */
+
+    document
+      .querySelectorAll(".navbtn")
+      .forEach(button => {
+
+        button.addEventListener(
+          "click",
+          async () => {
+
+            document
+              .querySelectorAll(".navbtn")
+              .forEach(x =>
+                x.classList.remove("active")
+              );
+
+
+            button.classList.add("active");
+
+
+            currentTab =
+              button.dataset.tab;
+
+
+            await render(currentTab);
+
+          }
+        );
+
+      });
+
+
+    /* =========================
+       HTML HELPERS
+    ========================= */
+
+    function shell(html) {
+
+      $("contentArea").innerHTML =
+        html;
+
+    }
+
+
+    function esc(value = "") {
+
+      return String(value)
+        .replace(
+          /[&<>"']/g,
+          character => {
+
+            const map = {
+
+              "&": "&amp;",
+              "<": "&lt;",
+              ">": "&gt;",
+              '"': "&quot;",
+              "'": "&#039;"
+
+            };
+
+            return map[character];
+
+          }
+        );
+
+    }
+
+
+    /* =========================
+       RENDER
+    ========================= */
+
+    /*
+     * Render requests are queued so a slow Dashboard/Firestore request
+     * cannot finish after a newer tab and overwrite its content.
+     */
+    let renderQueue = Promise.resolve();
+
+    function render(tab) {
+      renderQueue = renderQueue
+        .catch(() => {})
+        .then(() => renderTab(tab));
+
+      return renderQueue;
+    }
+
+    async function renderTab(tab) {
+
+      const titles = {
+
+        dashboard: "Dashboard",
+
+        portfolio: "Portfolio",
+
+        about: "About Us",
+
+        services: "Services",
+
+        clients: "Our Clients",
+
+        settings: "Website Settings",
+
+        media: "Media"
+
+      };
+
+
+      $("pageTitle").textContent =
+        titles[tab] || "Dashboard";
+
+
+      if (tab === "dashboard")
+        await dashboard();
+
+
+      if (tab === "portfolio")
+        await portfolio();
+
+
+      if (tab === "about")
+        await manageContent(
+          "blogs",
+          "About Us"
+        );
+
+
+      if (tab === "services")
+        await manageContent(
+          "filmmaking",
+          "Services"
+        );
+
+
+      if (tab === "clients")
+        await manageContent(
+          "startups",
+          "Our Clients"
+        );
+
+
+      if (tab === "settings")
+        await settings();
+
+
+      if (tab === "media")
+        await media();
+
+    }
+
+
+    /* =========================
+       DASHBOARD
+    ========================= */
+
+    async function dashboard() {
+
+      const [
+        portfolioSnap,
+        aboutSnap,
+        servicesSnap,
+        clientsSnap
+      ] = await Promise.all([
+
+        getDocs(
+          collection(
+            db,
+            "portfolio"
+          )
+        ),
+
+        getDocs(
+          collection(
+            db,
+            "blogs"
+          )
+        ),
+
+        getDocs(
+          collection(
+            db,
+            "filmmaking"
+          )
+        ),
+
+        getDocs(
+          collection(
+            db,
+            "startups"
+          )
+        )
+
+      ]);
+
+
+      shell(`
+
+        <div class="grid">
+
+          <div class="panel">
+
+            <div class="muted">
+              Portfolio Works
+            </div>
+
+            <h2>
+              ${portfolioSnap.size}
+            </h2>
+
+          </div>
+
+
+          <div class="panel">
+
+            <div class="muted">
+              About Us Entries
+            </div>
+
+            <h2>
+              ${aboutSnap.size}
+            </h2>
+
+          </div>
+
+
+          <div class="panel">
+
+            <div class="muted">
+              Services
+            </div>
+
+            <h2>
+              ${servicesSnap.size}
+            </h2>
+
+          </div>
+
+
+          <div class="panel">
+
+            <div class="muted">
+              Our Clients
+            </div>
+
+            <h2>
+              ${clientsSnap.size}
+            </h2>
+
+          </div>
+
+        </div>
+
+
+        <div class="panel">
+
+          <h2>
+            Website Management
+          </h2>
+
+          <p class="muted">
+
+            Manage your portfolio,
+            About Us content,
+            services,
+            clients,
+            website backgrounds
+            and website settings
+            from this dashboard.
+
+          </p>
+
+        </div>
+
+      `);
+
+    }
+
+
+    /* =========================
+       PORTFOLIO
+    ========================= */
+
+    async function portfolio() {
+
+      let snap;
+
+      try {
+        const portfolioQuery = query(
+          collection(db,"portfolio"),
+          orderBy("order","asc")
+        );
+        snap = await getDocs(portfolioQuery);
+      }
+      catch (error) {
+        console.warn("Ordered portfolio query failed:",error);
+        snap = await getDocs(collection(db,"portfolio"));
+      }
+
+      portfolioItems = snap.docs.map(document => ({
+        id: document.id,
+        ...document.data()
+      }));
+
+      shell(`
+        <div class="panel">
+          <h2>${editingEventId ? "Edit Portfolio Event" : "Add Portfolio Event"}</h2>
+
+          <div class="event-form-note">
+            Each event creates one section on portfolio.html:
+            <strong>event name on the left</strong>,
+            <strong>16:9 main image in the centre</strong>,
+            <strong>event description on the right</strong>,
+            followed by the event gallery.
+          </div>
+
+          <div class="grid">
+            <div>
+              <label>Event Name</label>
+              <input id="pTitle" placeholder="e.g. Ananya & Rahul Wedding">
+            </div>
+            <div>
+              <label>Category</label>
+              <input id="pCategory" placeholder="Photography / Wedding / Commercial">
+            </div>
+          </div>
+
+          <label>Event Description</label>
+          <textarea id="pDesc" placeholder="Write the description shown on the right side of the main image."></textarea>
+
+          <div class="grid">
+            <div>
+              <label>Main Event Image — 16:9</label>
+              <div class="drop">
+                <label for="pMainFile">Choose Main Image</label>
+                <input id="pMainFile" type="file" accept="image/jpeg,image/png,image/webp">
+                <div id="mainFileName" class="muted">JPG, PNG or WEBP</div>
+                <div id="mainPreview" class="preview"></div>
+              </div>
+            </div>
+
+            <div>
+              <label>Event Gallery Images</label>
+              <div class="drop">
+                <label for="pGalleryFiles">Choose Multiple Images</label>
+                <input id="pGalleryFiles" type="file" multiple accept="image/jpeg,image/png,image/webp">
+                <div id="galleryFileName" class="muted">Select multiple JPG, PNG or WEBP files</div>
+                <div id="galleryPreview" class="gallery-preview"></div>
+                <div class="ai-face-note">AI face-aware cropping is enabled on the event gallery. Uploaded photos are automatically framed around detected faces — no manual cropping is required.</div>
+              </div>
+            </div>
+          </div>
+
+          <div id="editGalleryArea"></div>
+
+          <div class="actions" style="margin-top:15px">
+            <button class="btn" id="saveEventBtn" type="button">
+              ${editingEventId ? "Save Event Changes" : "Publish Event"}
+            </button>
+            ${editingEventId ? `<button class="btn secondary" id="cancelEditBtn" type="button">Cancel Edit</button>` : ""}
+          </div>
+
+          <div id="uploadStatus" class="status"></div>
+        </div>
+
+        <div class="panel">
+          <div class="section-header">
+            <h2>Published Portfolio Events</h2>
+            <span class="muted">${portfolioItems.length} events</span>
+          </div>
+
+          <div class="cards">
+            ${portfolioItems.length ? portfolioItems.map(item => {
+              const main = item.mainImageUrl || item.imageUrl || "";
+              const gallery = normalizePortfolioGallery(item);
+              return `
+                <article class="card">
+                  ${main ? `<img src="${esc(main)}" alt="${esc(item.title || "Portfolio event")}" loading="lazy">` : `<div style="height:170px;display:grid;place-items:center;color:#666">No main image</div>`}
+                  <div class="card-body">
+                    <h3>${esc(item.title || "Untitled Event")}</h3>
+                    <p>${esc(item.description || "")}</p>
+                    ${gallery.length ? `<div class="thumbs">${gallery.slice(0,4).map(photo => `<img src="${esc(photo.imageUrl)}" alt="Gallery image" loading="lazy">`).join("")}</div>` : ""}
+                    <div class="actions">
+                      <button class="btn secondary small" data-event-edit="${esc(item.id)}" type="button">Edit Event</button>
+                      <button class="btn danger small" data-event-delete="${esc(item.id)}" type="button">Delete Event</button>
+                    </div>
+                  </div>
+                </article>
+              `;
+            }).join("") : `<p class="muted">No portfolio events yet.</p>`}
+          </div>
+        </div>
+      `);
+
+      setupPortfolioForm();
+
+      if (editingEventId) {
+        const item = portfolioItems.find(x => x.id === editingEventId);
+        if (item) {
+          $("pTitle").value = item.title || "";
+          $("pCategory").value = item.category || "";
+          $("pDesc").value = item.description || "";
+          renderExistingGallery(item);
+          if (item.mainImageUrl || item.imageUrl) {
+            $("mainPreview").innerHTML = `<img src="${esc(item.mainImageUrl || item.imageUrl)}" alt="Current main image">`;
+            $("mainFileName").textContent = "Current main image — choose a new file to replace it";
+          }
+        }
+      }
+
+      document.querySelectorAll("[data-event-edit]").forEach(button => {
+        button.addEventListener("click",async () => {
+          editingEventId = button.dataset.eventEdit;
+          selectedGalleryFiles = [];
+          galleryToDelete.clear();
+          await portfolio();
+          window.scrollTo({top:0,behavior:"smooth"});
+        });
+      });
+
+      document.querySelectorAll("[data-event-delete]").forEach(button => {
+        button.addEventListener("click",() => deletePortfolioEvent(button.dataset.eventDelete));
+      });
+    }
+
+    function normalizePortfolioGallery(item) {
+      if (Array.isArray(item.gallery)) {
+        return item.gallery
+          .map(x => typeof x === "string" ? {imageUrl:x} : x)
+          .filter(x => x && x.imageUrl);
+      }
+      if (item.imageUrl) return [{imageUrl:item.imageUrl,title:item.title || ""}];
+      return [];
+    }
+
+    let selectedGalleryFiles = [];
+    let galleryToDelete = new Set();
+
+    function setupPortfolioForm() {
+      $("pMainFile").addEventListener("change",event => {
+        const file = event.target.files[0];
+        $("mainFileName").textContent = file?.name || "JPG, PNG or WEBP";
+        $("mainPreview").innerHTML = "";
+        if (file) {
+          const url = URL.createObjectURL(file);
+          $("mainPreview").innerHTML = `<img src="${url}" alt="Main image preview">`;
+        }
+      });
+
+      $("pGalleryFiles").addEventListener("change",event => {
+        selectedGalleryFiles = Array.from(event.target.files || []);
+        $("galleryFileName").textContent = selectedGalleryFiles.length
+          ? `${selectedGalleryFiles.length} image(s) selected`
+          : "Select multiple JPG, PNG or WEBP files";
+        renderNewGalleryPreview();
+      });
+
+      $("saveEventBtn").addEventListener("click",savePortfolioEvent);
+
+      if ($("cancelEditBtn")) {
+        $("cancelEditBtn").addEventListener("click",async () => {
+          editingEventId = null;
+          selectedGalleryFiles = [];
+          galleryToDelete.clear();
+          await portfolio();
+        });
+      }
+    }
+
+    function renderNewGalleryPreview() {
+      const area = $("galleryPreview");
+      area.innerHTML = "";
+      selectedGalleryFiles.forEach((file,index) => {
+        const url = URL.createObjectURL(file);
+        const item = document.createElement("div");
+        item.className = "gallery-preview-item";
+        item.innerHTML = `<img src="${url}" alt="New gallery image ${index + 1}"><button type="button" aria-label="Remove image">&times;</button>`;
+        item.querySelector("button").addEventListener("click",() => {
+          selectedGalleryFiles.splice(index,1);
+          renderNewGalleryPreview();
+          $("galleryFileName").textContent = selectedGalleryFiles.length
+            ? `${selectedGalleryFiles.length} image(s) selected`
+            : "Select multiple JPG, PNG or WEBP files";
+        });
+        area.appendChild(item);
+      });
+    }
+
+    function renderExistingGallery(item) {
+      const gallery = normalizePortfolioGallery(item);
+      $("editGalleryArea").innerHTML = `
+        <div class="divider"></div>
+        <label>Existing Event Gallery</label>
+        ${gallery.length ? `
+          <div class="gallery-preview" id="existingGalleryPreview">
+            ${gallery.map((photo,index) => `
+              <div class="gallery-preview-item" data-existing-gallery="${index}">
+                <img src="${esc(photo.imageUrl)}" alt="Existing gallery image">
+                <button type="button" aria-label="Remove this gallery image" data-remove-gallery="${index}">&times;</button>
+              </div>
+            `).join("")}
+          </div>
+          <p class="muted" style="margin-top:10px">Click × to remove an existing image. The removal is saved when you save the event.</p>
+        ` : `<p class="muted">No existing gallery images.</p>`}
+      `;
+
+      document.querySelectorAll("[data-remove-gallery]").forEach(button => {
+        button.addEventListener("click",() => {
+          const index = Number(button.dataset.removeGallery);
+          galleryToDelete.add(index);
+          button.closest(".gallery-preview-item").remove();
+        });
+      });
+    }
+
+    function parseDetectedFaces(value) {
+      if (!value) return [];
+
+      if (Array.isArray(value)) {
+        if (value.length && Array.isArray(value[0])) {
+          return value
+            .filter(face => face.length >= 4)
+            .map(face => face.slice(0,4).map(Number))
+            .filter(face => face.every(Number.isFinite));
+        }
+
+        if (value.length >= 4 && value.every(v => Number.isFinite(Number(v)))) {
+          const faces = [];
+          for (let i = 0; i + 3 < value.length; i += 4) {
+            const face = value.slice(i,i + 4).map(Number);
+            if (face.every(Number.isFinite)) faces.push(face);
+          }
+          return faces;
+        }
+      }
+
+      if (typeof value === "string") {
+        return value.split("|")
+          .map(part => part.split(",").map(Number))
+          .filter(face => face.length >= 4 && face.slice(0,4).every(Number.isFinite))
+          .map(face => face.slice(0,4));
+      }
+
+      return [];
+    }
+
+    function calculateFaceObjectPosition(faces,width,height) {
+      if (!faces.length || !width || !height) return "50% 50%";
+
+      // Use the union of all detected faces so group photographs keep the
+      // group near the visible crop instead of focusing on only one person.
+      const minX = Math.min(...faces.map(face => face[0]));
+      const minY = Math.min(...faces.map(face => face[1]));
+      const maxX = Math.max(...faces.map(face => face[0] + face[2]));
+      const maxY = Math.max(...faces.map(face => face[1] + face[3]));
+
+      const centerX = (minX + maxX) / 2;
+      const centerY = (minY + maxY) / 2;
+
+      const x = Math.max(0,Math.min(100,(centerX / width) * 100));
+      const y = Math.max(0,Math.min(100,(centerY / height) * 100));
+
+      return `${x.toFixed(2)}% ${y.toFixed(2)}%`;
+    }
+
+    async function uploadPortfolioImage(file) {
+      if (!file) return null;
+      const allowedTypes = ["image/jpeg","image/png","image/webp"];
+      if (!allowedTypes.includes(file.type)) throw new Error("Only JPG, PNG and WEBP images are allowed.");
+      if (file.size > 15 * 1024 * 1024) throw new Error("Each image must be smaller than 15 MB.");
+
+      const formData = new FormData();
+      formData.append("file",file);
+      formData.append("upload_preset",CLOUDINARY_UPLOAD_PRESET);
+      // Face-aware cropping is handled at delivery time by Cloudinary's
+      // built-in g_faces transformation in event-gallery.html.
+
+      const uploadUrl = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`;
+      const response = await fetch(uploadUrl,{method:"POST",body:formData});
+      const result = await response.json();
+      if (!response.ok) throw new Error(result?.error?.message || "Cloudinary upload failed.");
+
+      // The unsigned upload response does not expose face analysis unless the
+      // Cloudinary upload preset is configured to request it. We therefore keep
+      // the upload metadata compatible and let event-gallery.html perform the
+      // actual AI face-aware crop at delivery time.
+      const faces = parseDetectedFaces(result.faces);
+      const width = Number(result.width) || 0;
+      const height = Number(result.height) || 0;
+
+      return {
+        imageUrl:result.secure_url,
+        cloudinaryPublicId:result.public_id || "",
+        faceCoordinates:faces,
+        faceCount:faces.length,
+        objectPosition:calculateFaceObjectPosition(faces,width,height),
+        width,
+        height
+      };
+    }
+
+    async function savePortfolioEvent() {
+      const title = $("pTitle").value.trim() || "Untitled Event";
+      const category = $("pCategory").value.trim() || "Photography";
+      const description = $("pDesc").value.trim();
+      const mainFile = $("pMainFile").files[0];
+
+      $("saveEventBtn").disabled = true;
+      $("saveEventBtn").textContent = editingEventId ? "Saving..." : "Publishing...";
+      $("uploadStatus").textContent = "Preparing event...";
+
+      try {
+        let existing = editingEventId ? portfolioItems.find(x => x.id === editingEventId) : null;
+        if (editingEventId && !existing) throw new Error("The event could not be found.");
+
+        let mainImageUrl = existing?.mainImageUrl || existing?.imageUrl || "";
+        let mainCloudinaryPublicId = existing?.mainCloudinaryPublicId || existing?.cloudinaryPublicId || "";
+        let mainObjectPosition = existing?.mainObjectPosition || "50% 50%";
+        let mainFaceCoordinates = Array.isArray(existing?.mainFaceCoordinates) ? existing.mainFaceCoordinates : [];
+        let mainFaceCount = Number(existing?.mainFaceCount || mainFaceCoordinates.length || 0);
+
+        if (mainFile) {
+          $("uploadStatus").textContent = "Uploading main event image...";
+          const uploadedMain = await uploadPortfolioImage(mainFile);
+          mainImageUrl = uploadedMain.imageUrl;
+          mainCloudinaryPublicId = uploadedMain.cloudinaryPublicId;
+          if (uploadedMain.faceCount > 0) {
+            mainObjectPosition = uploadedMain.objectPosition;
+            mainFaceCoordinates = uploadedMain.faceCoordinates;
+            mainFaceCount = uploadedMain.faceCount;
+          }
+        }
+
+        if (!mainImageUrl) throw new Error("Choose a main event image.");
+
+        let existingGallery = normalizePortfolioGallery(existing || {});
+        if (editingEventId && galleryToDelete.size) {
+          existingGallery = existingGallery.filter((_,index) => !galleryToDelete.has(index));
+        }
+
+        const newGallery = [];
+        for (let i=0;i<selectedGalleryFiles.length;i++) {
+          $("uploadStatus").textContent = `Uploading gallery image ${i+1} of ${selectedGalleryFiles.length}...`;
+          const uploaded = await uploadPortfolioImage(selectedGalleryFiles[i]);
+          const galleryPhoto = {
+            imageUrl:uploaded.imageUrl,
+            cloudinaryPublicId:uploaded.cloudinaryPublicId,
+            createdAt:Date.now()
+          };
+          // If face coordinates are returned by a configured Cloudinary preset,
+          // keep them. Otherwise event-gallery.html uses g_faces automatically.
+          if (uploaded.faceCount > 0) {
+            galleryPhoto.objectPosition = uploaded.objectPosition;
+            galleryPhoto.faceCoordinates = uploaded.faceCoordinates;
+            galleryPhoto.faceCount = uploaded.faceCount;
+          }
+          newGallery.push(galleryPhoto);
+        }
+
+        const payload = {
+          title,
+          category,
+          description,
+          mainImageUrl,
+          mainCloudinaryPublicId,
+          mainObjectPosition,
+          mainFaceCoordinates,
+          mainFaceCount,
+          gallery:[...existingGallery,...newGallery],
+          updatedAt:serverTimestamp()
+        };
+
+        if (!editingEventId) {
+          payload.order = Date.now();
+          payload.createdAt = serverTimestamp();
+          await addDoc(collection(db,"portfolio"),payload);
+        } else {
+          await updateDoc(doc(db,"portfolio",editingEventId),payload);
+        }
+
+        editingEventId = null;
+        selectedGalleryFiles = [];
+        galleryToDelete.clear();
+        await portfolio();
+      }
+      catch (error) {
+        console.error("Portfolio event save error:",error);
+        $("uploadStatus").textContent = "Save failed: " + error.message;
+        $("saveEventBtn").disabled = false;
+        $("saveEventBtn").textContent = editingEventId ? "Save Event Changes" : "Publish Event";
+      }
+    }
+
+    async function deletePortfolioEvent(id) {
+      const item = portfolioItems.find(x => x.id === id);
+      if (!item) return;
+
+      if (!confirm(`Delete the event "${item.title || "Untitled Event"}"?\n\nThis removes the Firestore event record. Cloudinary files are not deleted from the browser.`)) return;
+
+      try {
+        await deleteDoc(doc(db,"portfolio",id));
+        if (editingEventId === id) editingEventId = null;
+        await portfolio();
+      } catch (error) {
+        console.error(error);
+        alert("Delete failed: " + error.message);
+      }
+    }
+
+    /* =========================
+       ABOUT / SERVICES / CLIENTS
+    ========================= */
+
+    async function manageContent(
+      collectionName,
+      displayName
+    ) {
+
+      const snap =
+        await getDocs(
+          collection(
+            db,
+            collectionName
+          )
+        );
+
+
+      const items =
+        snap.docs.map(
+          document => ({
+            id: document.id,
+            ...document.data()
+          })
+        );
+
+
+      shell(`
+
+        <div class="panel">
+
+          <h2>
+            Manage ${esc(displayName)}
+          </h2>
+
+          <p class="muted">
+
+            Add, edit or remove content
+            shown in the
+            ${esc(displayName)}
+            section of your website.
+
+          </p>
+
+        </div>
+
+
+        <div class="panel">
+
+          <h3>
+            Add ${esc(displayName)}
+          </h3>
+
+
+          <label>
+            Title
+          </label>
+
+          <input
+            id="contentTitle"
+            placeholder="Enter title"
+          >
+
+
+          <label>
+            Description
+          </label>
+
+          <textarea
+            id="contentDescription"
+            placeholder="Enter description"
+          ></textarea>
+
+
+          <label>
+            Image URL
+          </label>
+
+          <input
+            id="contentImage"
+            placeholder="Cloudinary image URL"
+          >
+
+
+          <div
+            class="actions"
+            style="margin-top:15px"
+          >
+
+            <button
+              class="btn"
+              id="addContentBtn"
+              type="button"
+            >
+              Add Content
+            </button>
+
+          </div>
+
+
+          <div
+            id="contentStatus"
+            class="status"
+          ></div>
+
+        </div>
+
+
+        <div class="panel">
+
+          <div class="section-header">
+
+            <h2>
+              Published ${esc(displayName)}
+            </h2>
+
+            <span class="muted">
+              ${items.length}
+              items
+            </span>
+
+          </div>
+
+
+          <div class="cards">
+
+            ${
+              items.length
+
+                ? items.map(item => `
+
+                    <article class="card">
+
+                      ${
+                        item.imageUrl
+                          ? `
+
+                            <img
+                              src="${esc(item.imageUrl)}"
+                              alt="${esc(
+                                item.title ||
+                                displayName
+                              )}"
+                              loading="lazy"
+                            >
+
+                          `
+                          : ""
+                      }
+
+
+                      <div class="card-body">
+
+                        <h3>
+                          ${esc(
+                            item.title ||
+                            "Untitled"
+                          )}
+                        </h3>
+
+
+                        <p>
+                          ${esc(
+                            item.description ||
+                            ""
+                          )}
+                        </p>
+
+
+                        <div class="actions">
+
+                          <button
+                            class="btn secondary small"
+                            data-content-edit="${esc(item.id)}"
+                            type="button"
+                          >
+                            Edit
+                          </button>
+
+
+                          <button
+                            class="btn danger small"
+                            data-content-delete="${esc(item.id)}"
+                            type="button"
+                          >
+                            Delete
+                          </button>
+
+                        </div>
+
+                      </div>
+
+                    </article>
+
+                  `).join("")
+
+                : `
+
+                    <p class="muted">
+                      No ${esc(displayName)}
+                      content yet.
+                    </p>
+
+                  `
+            }
+
+          </div>
+
+        </div>
+
+      `);
+
+
+      /* =========================
+         ADD CONTENT
+      ========================= */
+
+      $("addContentBtn")
+        .addEventListener(
+          "click",
+          async () => {
+
+            const title =
+              $("contentTitle")
+                .value
+                .trim();
+
+
+            const description =
+              $("contentDescription")
+                .value
+                .trim();
+
+
+            const imageUrl =
+              $("contentImage")
+                .value
+                .trim();
+
+
+            if (!title) {
+
+              $("contentStatus")
+                .textContent =
+                "Please enter a title.";
+
+              return;
+
+            }
+
+
+            try {
+
+              await addDoc(
+                collection(
+                  db,
+                  collectionName
+                ),
+                {
+
+                  title,
+
+                  description,
+
+                  imageUrl,
+
+                  createdAt:
+                    serverTimestamp()
+
+                }
+              );
+
+
+              await manageContent(
+                collectionName,
+                displayName
+              );
+
+            }
+
+            catch (error) {
+
+              console.error(error);
+
+              $("contentStatus")
+                .textContent =
+                "Could not add content: " +
+                error.message;
+
+            }
+
+          }
+        );
+
+
+      /* =========================
+         EDIT CONTENT
+      ========================= */
+
+      document
+        .querySelectorAll(
+          "[data-content-edit]"
+        )
+        .forEach(button => {
+
+          button.addEventListener(
+            "click",
+            async () => {
+
+              const id =
+                button.dataset
+                  .contentEdit;
+
+
+              const item =
+                items.find(
+                  x => x.id === id
+                );
+
+
+              if (!item)
+                return;
+
+
+              const title =
+                prompt(
+                  "Title",
+                  item.title || ""
+                );
+
+
+              if (title === null)
+                return;
+
+
+              const description =
+                prompt(
+                  "Description",
+                  item.description || ""
+                );
+
+
+              if (description === null)
+                return;
+
+
+              const imageUrl =
+                prompt(
+                  "Image URL",
+                  item.imageUrl || ""
+                );
+
+
+              if (imageUrl === null)
+                return;
+
+
+              try {
+
+                await updateDoc(
+                  doc(
+                    db,
+                    collectionName,
+                    id
+                  ),
+                  {
+
+                    title,
+
+                    description,
+
+                    imageUrl
+
+                  }
+                );
+
+
+                await manageContent(
+                  collectionName,
+                  displayName
+                );
+
+              }
+
+              catch (error) {
+
+                alert(
+                  "Update failed: " +
+                  error.message
+                );
+
+              }
+
+            }
+          );
+
+        });
+
+
+      /* =========================
+         DELETE CONTENT
+      ========================= */
+
+      document
+        .querySelectorAll(
+          "[data-content-delete]"
+        )
+        .forEach(button => {
+
+          button.addEventListener(
+            "click",
+            async () => {
+
+              const id =
+                button.dataset
+                  .contentDelete;
+
+
+              if (
+                !confirm(
+                  `Delete this ${displayName} item?`
+                )
+              ) {
+
+                return;
+
+              }
+
+
+              try {
+
+                await deleteDoc(
+                  doc(
+                    db,
+                    collectionName,
+                    id
+                  )
+                );
+
+
+                await manageContent(
+                  collectionName,
+                  displayName
+                );
+
+              }
+
+              catch (error) {
+
+                alert(
+                  "Delete failed: " +
+                  error.message
+                );
+
+              }
+
+            }
+          );
+
+        });
+
+    }
+
+
+    /* =========================
+       WEBSITE SETTINGS
+    ========================= */
+
+    async function settings() {
+
+      const snapshot =
+        await getDoc(
+          doc(
+            db,
+            "site",
+            "settings"
+          )
+        );
+
+
+      const data =
+        snapshot.exists()
+          ? snapshot.data()
+          : {};
+
+
+      shell(`
+
+        <div class="panel">
+
+          <h2>
+            Website Settings
+          </h2>
+
+
+          <div class="grid">
+
+            <div>
+
+              <label>
+                Site Name
+              </label>
+
+              <input
+                id="siteName"
+                value="${esc(
+                  data.siteName ||
+                  ""
+                )
+                
+                }"
+              >
+
+            </div>
+
+
+            <div>
+
+              <label>
+                Hero Title
+              </label>
+
+              <input
+                id="heroTitle"
+                value="${esc(
+                  data.heroTitle ||
+                  "Welcome"
+                )}"
+              >
+
+            </div>
+
+
+            <div>
+
+              <label>
+                Hero Subtitle
+              </label>
+
+              <input
+                id="heroSubtitle"
+                value="${esc(
+                  data.heroSubtitle ||
+                  ""
+                )}"
+              >
+
+            </div>
+
+
+            <div>
+
+              <label>
+                Profile Image URL
+              </label>
+
+              <input
+                id="profileUrl"
+                value="${esc(
+                  data.profileUrl ||
+                  ""
+                )}"
+                placeholder="Cloudinary image URL"
+              >
+
+            </div>
+
+
+            <div>
+
+              <label>
+                Portfolio Background URL
+              </label>
+
+              <input
+                id="portfolioBg"
+                value="${esc(
+                  data.portfolioBg ||
+                  ""
+                )}"
+                placeholder="Cloudinary image URL"
+              >
+
+            </div>
+
+
+            <div>
+
+              <label>
+                About Us Background URL
+              </label>
+
+              <input
+                id="blogsBg"
+                value="${esc(
+                  data.blogsBg ||
+                  ""
+                )}"
+                placeholder="Cloudinary image URL"
+              >
+
+            </div>
+
+
+            <div>
+
+              <label>
+                Services Background URL
+              </label>
+
+              <input
+                id="filmBg"
+                value="${esc(
+                  data.filmBg ||
+                  ""
+                )}"
+                placeholder="Cloudinary image URL"
+              >
+
+            </div>
+
+
+            <div>
+
+              <label>
+                Our Clients Background URL
+              </label>
+
+              <input
+                id="startupBg"
+                value="${esc(
+                  data.startupBg ||
+                  ""
+                )}"
+                placeholder="Cloudinary image URL"
+              >
+
+            </div>
+            <div>
+
+  <label>
+    Background Video — Desktop / Laptop
+  </label>
+
+  <div class="drop">
+
+    <label for="backgroundVideoFile">
+      Choose Video
+    </label>
+
+    <input
+      id="backgroundVideoFile"
+      type="file"
+      accept="video/mp4,video/webm,video/ogg"
+    >
+
+    <div
+      id="backgroundVideoFileName"
+      class="muted"
+    >
+      16:9 • MP4, WEBM or OGG
+    </div>
+
+    <div
+      id="backgroundVideoPreview"
+      class="preview"
+    ></div>
+
+  </div>
+
+  <input
+    id="backgroundVideo"
+    value="${esc(
+      data.backgroundVideo ||
+      ""
+    )}"
+    placeholder="Cloudinary video URL"
+    style="margin-top:10px"
+  >
+
+</div>
+
+          </div>
+
+
+            <div>
+
+  <label>
+    Background Video — Mobile
+  </label>
+
+  <div class="drop">
+
+    <label for="backgroundVideoMobileFile">
+      Choose Mobile Video
+    </label>
+
+    <input
+      id="backgroundVideoMobileFile"
+      type="file"
+      accept="video/mp4,video/webm,video/ogg"
+    >
+
+    <div
+      id="backgroundVideoMobileFileName"
+      class="muted"
+    >
+      9:16 • MP4, WEBM or OGG
+    </div>
+
+    <div
+      id="backgroundVideoMobilePreview"
+      class="preview"
+    ></div>
+
+  </div>
+
+  <input
+    id="backgroundVideoMobile"
+    value="${esc(
+      data.backgroundVideoMobile ||
+      ""
+    )}"
+    placeholder="Cloudinary mobile video URL"
+    style="margin-top:10px"
+  >
+
+</div>
+
+
+          <div
+            class="actions"
+            style="margin-top:20px"
+          >
+
+            <button
+              class="btn"
+              id="saveSettings"
+              type="button"
+            >
+              Save Website Settings
+            </button>
+
+          </div>
+
+
+          <div
+            id="saveStatus"
+            class="status"
+          ></div>
+
+        </div>
+
+      `);
+      /* ==========================================
+   BACKGROUND VIDEO PREVIEW
+========================================== */
+
+$("backgroundVideoFile").addEventListener(
+  "change",
+  event => {
+
+    const file =
+      event.target.files[0];
+
+    $("backgroundVideoFileName").textContent =
+      file?.name ||
+      "MP4, WEBM or OGG";
+
+    $("backgroundVideoPreview").innerHTML =
+      "";
+
+    if (file) {
+
+      const url =
+        URL.createObjectURL(file);
+
+      $("backgroundVideoPreview").innerHTML = `
+
+        <video
+          src="${url}"
+          controls
+          muted
+          style="
+            width:280px;
+            max-width:100%;
+            border-radius:10px;
+            border:1px solid var(--line);
+            margin-top:10px;
+          "
+        ></video>
+
+      `;
+
+    }
+
+  }
+);
+
+
+      /* ==========================================
+         MOBILE BACKGROUND VIDEO PREVIEW
+      ========================================== */
+
+      $("backgroundVideoMobileFile").addEventListener(
+        "change",
+        event => {
+          const file = event.target.files[0];
+
+          $("backgroundVideoMobileFileName").textContent =
+            file?.name || "9:16 • MP4, WEBM or OGG";
+
+          $("backgroundVideoMobilePreview").innerHTML = "";
+
+          if (file) {
+            const url = URL.createObjectURL(file);
+            $("backgroundVideoMobilePreview").innerHTML = `
+              <video
+                src="${url}"
+                controls
+                muted
+                playsinline
+                style="width:180px;max-width:100%;aspect-ratio:9 / 16;object-fit:cover;border-radius:10px;border:1px solid var(--line);margin-top:10px;"
+              ></video>`;
+          }
+        }
+      );
+
+      $("saveSettings")
+  .addEventListener(
+    "click",
+    async () => {
+
+      try {
+
+        $("saveSettings").disabled =
+          true;
+
+        $("saveSettings").textContent =
+          "Saving...";
+
+        $("saveStatus").textContent =
+          "";
+
+        /* Existing video URLs */
+        let backgroundVideo = $("backgroundVideo").value.trim();
+        let backgroundVideoMobile = $("backgroundVideoMobile").value.trim();
+
+        const allowedVideoTypes = ["video/mp4", "video/webm", "video/ogg"];
+
+        async function uploadBackgroundVideo(file, label) {
+          if (!file) return null;
+
+          if (!allowedVideoTypes.includes(file.type)) {
+            throw new Error(`${label}: Only MP4, WEBM and OGG videos are allowed.`);
+          }
+
+          if (file.size > 100 * 1024 * 1024) {
+            throw new Error(`${label}: Video must be smaller than 100 MB.`);
+          }
+
+          const formData = new FormData();
+          formData.append("file", file);
+          formData.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
+
+          const uploadUrl = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/video/upload`;
+          const response = await fetch(uploadUrl, { method: "POST", body: formData });
+          const result = await response.json();
+
+          if (!response.ok) {
+            throw new Error(result?.error?.message || `${label} Cloudinary upload failed.`);
+          }
+
+          return result.secure_url;
+        }
+
+        const videoFile = $("backgroundVideoFile").files[0];
+
+        if (videoFile) {
+          $("saveStatus").textContent = "Uploading desktop background video...";
+          backgroundVideo = await uploadBackgroundVideo(videoFile, "Desktop background video");
+          $("backgroundVideo").value = backgroundVideo;
+        }
+
+        const mobileVideoFile = $("backgroundVideoMobileFile").files[0];
+
+        if (mobileVideoFile) {
+          $("saveStatus").textContent = "Uploading mobile background video...";
+          backgroundVideoMobile = await uploadBackgroundVideo(mobileVideoFile, "Mobile background video");
+          $("backgroundVideoMobile").value = backgroundVideoMobile;
+        }
+
+        if (videoFile || mobileVideoFile) {
+          $("saveStatus").textContent = "Videos uploaded. Saving settings...";
+        }
+
+        /*
+         * Save ALL existing settings
+         * + backgroundVideo
+         */
+
+        await setDoc(
+          doc(
+            db,
+            "site",
+            "settings"
+          ),
+          {
+
+            siteName:
+              $("siteName")
+                .value,
+
+            heroTitle:
+              $("heroTitle")
+                .value,
+
+            heroSubtitle:
+              $("heroSubtitle")
+                .value,
+
+            profileUrl:
+              $("profileUrl")
+                .value,
+
+            portfolioBg:
+              $("portfolioBg")
+                .value,
+
+            blogsBg:
+              $("blogsBg")
+                .value,
+
+            filmBg:
+              $("filmBg")
+                .value,
+
+            startupBg:
+              $("startupBg")
+                .value,
+
+            backgroundVideo,
+
+            backgroundVideoMobile,
+
+            updatedAt:
+              serverTimestamp()
+
+          },
+          {
+            merge: true
+          }
+        );
+
+        $("saveStatus").textContent =
+          "Website settings saved successfully.";
+
+        $("backgroundVideoFile").value =
+          "";
+
+        $("backgroundVideoFileName")
+          .textContent =
+          "MP4, WEBM or OGG";
+
+        $("backgroundVideoPreview")
+          .innerHTML =
+          "";
+
+        $("backgroundVideoMobileFile").value = "";
+        $("backgroundVideoMobileFileName").textContent = "9:16 • MP4, WEBM or OGG";
+        $("backgroundVideoMobilePreview").innerHTML = "";
+
+      }
+
+      catch (error) {
+
+        console.error(
+          "Settings save error:",
+          error
+        );
+
+        $("saveStatus").textContent =
+          "Save failed: " +
+          error.message;
+
+      }
+
+      finally {
+
+        $("saveSettings").disabled =
+          false;
+
+        $("saveSettings").textContent =
+          "Save Website Settings";
+
+      }
+
+    }
+  );
+    }
+
+
+    /* =========================
+       MEDIA
+    ========================= */
+
+    async function media() {
+
+      shell(`
+
+        <div class="panel">
+
+          <h2>
+            Media Library
+          </h2>
+
+          <p class="muted">
+
+            Portfolio images are uploaded
+            directly to Cloudinary.
+
+            Firestore stores the image URL
+            and portfolio information.
+
+          </p>
+
+        </div>
+
+
+        <div class="panel">
+
+          <h3>
+            Current Architecture
+          </h3>
+
+          <p class="muted">
+
+            Authentication →
+            Firebase Authentication
+
+            <br><br>
+
+            Website Data →
+            Cloud Firestore
+
+            <br><br>
+
+            Images →
+            Cloudinary
+
+          </p>
+
+        </div>
+
+
+        <div class="panel">
+
+          <h3>
+            Content Structure
+          </h3>
+
+          <p class="muted">
+
+            Portfolio →
+            portfolio collection
+
+            <br><br>
+
+            About Us →
+            blogs collection
+
+            <br><br>
+
+            Services →
+            filmmaking collection
+
+            <br><br>
+
+            Our Clients →
+            startups collection
+
+          </p>
+
+        </div>
+
+      `);
+
+    }
+
+  </script>
+
+</body>
+
+</html>
