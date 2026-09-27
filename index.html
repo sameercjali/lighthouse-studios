@@ -41,6 +41,11 @@
       overflow-x: hidden;
     }
 
+    /* Prevent the page from being interacted with while the intro is active. */
+    body.intro-playing {
+      overflow: hidden;
+    }
+
     a:focus-visible,
     button:focus-visible {
 
@@ -66,7 +71,8 @@
 
       background: #000;
 
-      z-index: 9999;
+      /* Keep the intro above every navbar layer while it plays. */
+      z-index: 10001;
 
       display: flex;
 
@@ -6350,7 +6356,7 @@ body {
           required
           autocomplete="name"
         >
-
+      
       </div>
 
       <!-- EMAIL -->
@@ -6546,7 +6552,7 @@ body {
       <!-- REPLACE THESE WITH YOUR ACTUAL DETAILS -->
 
       <a
-        href="mailto:thelighthousestudios.in@gmail.com"
+        href="mailto:your-email@example.com"
       >
 
         thelighthousestudios.in@gmail.com
@@ -6588,7 +6594,7 @@ body {
         <!-- Replace the href below with your WhatsApp chat link -->
         <a
           class="footer-social-link"
-          href="https://wa.me/++916281090269"
+          href="https://wa.me/+918500528369"
           target="_blank"
           rel="noopener noreferrer"
           aria-label="Contact The Light House Studios on WhatsApp"
@@ -9002,6 +9008,12 @@ function updatePortfolioStack(animate = true){
   if(!eventsContainer || !portfolioEvents.length) return;
 
   const cards = eventsContainer.querySelectorAll(".lh-portfolio-stack-card");
+  const viewport = document.getElementById("portfolioViewport");
+
+  if(!cards.length || !viewport) return;
+
+  const viewportWidth = viewport.clientWidth;
+  const viewportHalf = viewportWidth / 2;
 
   cards.forEach((card, index) => {
     let raw = index - portfolioCurrentIndex;
@@ -9015,17 +9027,18 @@ function updatePortfolioStack(animate = true){
     const distance = Math.abs(raw);
     const direction = raw < 0 ? -1 : raw > 0 ? 1 : 0;
 
-    let x = 0, y = 0, rotate = 0, scale = 1, opacity = 1, z = 20;
+    let x = 0;
+    let y = 0;
+    let rotate = 0;
+    let scale = 1;
+    let opacity = 1;
+    let z = 20;
 
-    /* Wide cinematic fan:
-       active card stays centered; neighbouring cards move far enough
-       sideways to create the same open fan composition as the reference. */
+    /* Responsive fan spacing. */
     const fan = window.innerWidth <= 768
-      ? Math.min(Math.max(window.innerWidth * 0.20, 95), 150)
-      : Math.min(Math.max(window.innerWidth * 0.235, 235), 390);
+      ? Math.min(Math.max(viewportWidth * 0.16, 55), 105)
+      : Math.min(Math.max(viewportWidth * 0.22, 180), 390);
 
-    /* Match the reference fan: the whole deck sits high in the section,
-       with side cards rising slightly above the active card. */
     if(distance === 0){
       x = 0;
       y = 0;
@@ -9041,14 +9054,14 @@ function updatePortfolioStack(animate = true){
       opacity = .96;
       z = 40;
     } else if(distance === 2){
-      x = direction * (fan * 1.72);
+      x = direction * (fan * 1.45);
       y = -8;
       rotate = direction * 14;
       scale = .68;
       opacity = .74;
       z = 30;
     } else {
-      x = direction * (fan * 2.22);
+      x = direction * (fan * 1.75);
       y = 8;
       rotate = direction * 18;
       scale = .56;
@@ -9056,22 +9069,62 @@ function updatePortfolioStack(animate = true){
       z = 10;
     }
 
+    /*
+      Keep every card inside the actual portfolio viewport.
+
+      The old version used a fixed horizontal offset, which could push
+      the outer cards outside the browser on smaller screens.
+      Here the final X position is clamped using the card's real size,
+      scale and rotation.
+    */
+    const cardWidth = card.offsetWidth;
+    const cardHeight = card.offsetHeight;
+
+    const angle = Math.abs(rotate) * Math.PI / 180;
+    const rotatedHalfWidth =
+      (
+        cardWidth * scale * Math.cos(angle) +
+        cardHeight * scale * Math.sin(angle)
+      ) / 2;
+
+    const edgePadding = window.innerWidth <= 768 ? 6 : 10;
+    const maxSafeX = Math.max(
+      0,
+      viewportHalf - rotatedHalfWidth - edgePadding
+    );
+
+    x = direction * Math.min(Math.abs(x), maxSafeX);
+
     card.style.transition = animate
       ? "transform .58s cubic-bezier(.16,1,.3,1), opacity .45s ease, filter .45s ease"
       : "none";
+
     card.style.transform =
       `translate3d(calc(-50% + ${x}px), ${y}px, 0) rotate(${rotate}deg) scale(${scale})`;
+
     card.style.opacity = String(opacity);
     card.style.zIndex = String(z);
-    card.style.filter = distance > 1 ? "brightness(.62)" : distance === 1 ? "brightness(.78)" : "brightness(1)";
+    card.style.filter =
+      distance > 1
+        ? "brightness(.62)"
+        : distance === 1
+          ? "brightness(.78)"
+          : "brightness(1)";
+
     card.classList.toggle("active", distance === 0);
   });
 
   const counter = document.getElementById("portfolioCounter");
+
   if(counter){
-    const current = String(portfolioCurrentIndex + 1).padStart(2,"0");
-    const total = String(portfolioEvents.length).padStart(2,"0");
-    counter.innerHTML = `<strong>${current}</strong> / ${total}`;
+    const current =
+      String(portfolioCurrentIndex + 1).padStart(2,"0");
+
+    const total =
+      String(portfolioEvents.length).padStart(2,"0");
+
+    counter.innerHTML =
+      `<strong>${current}</strong> / ${total}`;
   }
 }
 
@@ -9081,6 +9134,16 @@ function changePortfolioEvent(step){
     (portfolioCurrentIndex + step + portfolioEvents.length) % portfolioEvents.length;
   updatePortfolioStack(true);
 }
+
+let portfolioResizeTimer = null;
+
+window.addEventListener("resize", () => {
+  clearTimeout(portfolioResizeTimer);
+
+  portfolioResizeTimer = setTimeout(() => {
+    updatePortfolioStack(false);
+  }, 120);
+});
 
 function setupPortfolioCarousel(){
   const prev = document.getElementById("portfolioPrevButton");
@@ -9370,6 +9433,9 @@ if (document.readyState === "loading") {
         "introVideo"
       );
 
+    /* Keep the page locked until the intro has finished. */
+    document.body.classList.add("intro-playing");
+
     const introVideoPlayer =
       document.getElementById(
         "introVideoPlayer"
@@ -9404,6 +9470,8 @@ if (document.readyState === "loading") {
         );
 
       }
+
+      document.body.classList.remove("intro-playing");
 
     }
 
@@ -9520,6 +9588,8 @@ if (document.readyState === "loading") {
           introVideo.classList.add(
             "hidden"
           );
+
+          document.body.classList.remove("intro-playing");
 
           if (introVideoPlayer) {
 
@@ -10881,7 +10951,7 @@ nav::after {
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
+  overflow: visible;
   isolation: isolate;
   position: relative;
   width: 100%;
@@ -11721,12 +11791,8 @@ nav::after {
 
 @media (min-width: 769px) {
   section#services {
-    min-height:
-      calc(100svh - var(--lh-nav-height, 55px));
-
-    height:
-      calc(100svh - var(--lh-nav-height, 55px));
-
+    min-height:100svh;
+    height:100svh;
     padding: 0 20px 18px;
 
     display: flex;
