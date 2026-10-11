@@ -22,6 +22,11 @@
       margin: 0;
       padding: 0;
       box-sizing: border-box;
+      border: none !important;
+    }
+    
+    *, *::before, *::after {
+      transition-timing-function: cubic-bezier(0.25, 1, 0.5, 1) !important;
     }
 
     html {
@@ -6261,6 +6266,8 @@ body {
           </div>
         </div>
 
+
+
         <div
           class="carousel-dots"
           id="servicesCarouselDots"
@@ -8106,6 +8113,8 @@ if (document.readyState === "loading") {
 const servicesContainer = document.getElementById("servicesContent");
 const servicesViewport = document.getElementById("servicesCarouselViewport");
 const servicesDots = document.getElementById("servicesCarouselDots");
+const servicesPrevArrow = document.getElementById("servicesPrevArrow");
+const servicesNextArrow = document.getElementById("servicesNextArrow");
 
 let servicesItems = [];
 let servicesCurrentIndex = 0;
@@ -8114,6 +8123,7 @@ let servicesTouchStartX = 0;
 let servicesTouchStartY = 0;
 let servicesTouchStartTarget = null;
 let servicesTouchMoved = false;
+let servicesSwipeOffsetX = 0;
 
 let servicesLastWheel = 0;
 let servicesAnimating = false;
@@ -8162,10 +8172,13 @@ function servicesGoTo(index, animate = true) {
   );
 }
 
-function changeService(step) {
-  if (!servicesItems.length || servicesAnimating) return;
+let servicesAnimationToken = null;
 
-  const nextIndex = servicesCurrentIndex + Number(step);
+function changeService(step, startingOffset = 0) {
+  if (!servicesItems.length) return;
+
+  const direction = Number(step);
+  const nextIndex = servicesCurrentIndex + direction;
 
   if (
     nextIndex < 0 ||
@@ -8174,17 +8187,81 @@ function changeService(step) {
     return;
   }
 
-  servicesAnimating = true;
-
-  servicesGoTo(nextIndex, true);
-
-  window.setTimeout(
-    () => {
-      servicesAnimating = false;
-    },
-    servicesReducedMotion.matches ? 20 : 580
+  const outgoingCard = servicesContainer?.querySelector(
+    `.lh-service-stack-card[data-index="${servicesCurrentIndex}"]`
   );
+
+  if (!outgoingCard) return;
+
+  servicesAnimating = true;
+  const animationToken = Symbol("services-animation");
+  servicesAnimationToken = animationToken;
+
+  // The active card exits physically, while the next card becomes
+  // active immediately. There is deliberately NO input lock, so
+  // repeated arrow-key / arrow-button presses work right away.
+  const exitDuration = servicesReducedMotion.matches ? 0 : 900;
+
+  const viewportWidth =
+    servicesViewport?.clientWidth || window.innerWidth;
+
+  const exitX = direction > 0
+    ? -(viewportWidth + outgoingCard.offsetWidth)
+    : (viewportWidth + outgoingCard.offsetWidth);
+
+  /*
+   * The card is already at the user's drag position.
+   * Start the exit animation FROM THAT EXACT POSITION.
+   * This prevents the card from snapping back to center first.
+   */
+  const startX = Number(startingOffset) || 0;
+
+  outgoingCard.style.transition = "none";
+  outgoingCard.style.zIndex = "100";
+  outgoingCard.style.pointerEvents = "none";
+  outgoingCard.style.transform =
+    `translate3d(calc(-50% + ${startX}px), -50%, 0) scale(1)`;
+
+  void outgoingCard.offsetWidth;
+
+  outgoingCard.style.transition = servicesReducedMotion.matches
+    ? "none"
+    : `transform ${exitDuration}ms cubic-bezier(0.6, 0.04, 0.98, 0.34)`;
+
+  outgoingCard.style.transform =
+    `translate3d(calc(-50% + ${exitX}px), -50%, 0) scale(1)`;
+
+  /*
+   * The next card becomes active immediately, but NO transition is
+   * applied to it. Only the card being swiped physically moves.
+   */
+  servicesCurrentIndex = nextIndex;
+  updateServicesStack(false, outgoingCard);
+
+  servicesSwipeOffsetX = 0;
+
+  // Keep the outgoing card at its exit position while the new active
+  // card is already visible. Clean it up only after the physical exit.
+  window.setTimeout(() => {
+    if (servicesAnimationToken !== animationToken) return;
+    servicesAnimating = false;
+    updateServicesStack(false);
+  }, exitDuration);
 }
+
+
+/*
+ * Services arrow controls.
+ * LEFT  -> next service -> current card exits LEFT.
+ * RIGHT -> previous service -> current card exits RIGHT.
+ */
+servicesPrevArrow?.addEventListener("click", () => {
+  changeService(1);
+});
+
+servicesNextArrow?.addEventListener("click", () => {
+  changeService(-1);
+});
 
 function renderServicesStack() {
   if (!servicesContainer) return;
@@ -8423,97 +8500,69 @@ function updateServicesViewportHeight() {
     `${Math.round(desired)}px`;
 }
 
-function updateServicesStack(animate = true) {
-  if (
-    !servicesContainer ||
-    !servicesItems.length
-  ) {
-    return;
-  }
+function updateServicesStack(animate = true, skipCard = null) {
+  if (!servicesContainer || !servicesItems.length) return;
 
   const cards = servicesGetCards();
-  const total = cards.length;
-  const reduced =
-    servicesReducedMotion.matches;
+  const reduced = servicesReducedMotion.matches;
+  const useAnimation = animate && !reduced;
 
-  const useAnimation =
-    animate && !reduced;
-
+  /*
+   * Straight horizontal deck:
+   * active card = centered
+   * previous cards = slightly left behind
+   * next cards = slightly right behind
+   */
   cards.forEach((card, index) => {
-    const raw =
-      index - servicesCurrentIndex;
+    if (card === skipCard) return;
 
+    const raw = index - servicesCurrentIndex;
     const distance = Math.abs(raw);
 
-    let y = 0;
+    let x = 0;
     let scale = 1;
     let zIndex = 50;
     let pointerEvents = "none";
 
-    /*
-     * True stacked-card layout:
-     * - The active card stays fully visible in front.
-     * - Following cards sit visibly underneath it.
-     * - Every card remains fully opaque, so there is no fade effect.
-     * - Changing services smoothly moves the entire deck into its new order.
-     */
     if (distance === 0) {
-      y = 0;
+      x = 0;
       scale = 1;
-
       zIndex = 50;
       pointerEvents = "auto";
     } else if (distance === 1) {
-      y = 32;
-      scale = 0.97;
+      x = raw < 0 ? -34 : 34;
+      scale = 0.98;
       zIndex = 40;
-      pointerEvents = "auto";
     } else if (distance === 2) {
-      y = 64;
-      scale = 0.94;
+      x = raw < 0 ? -68 : 68;
+      scale = 0.96;
       zIndex = 30;
-      pointerEvents = "auto";
     } else if (distance === 3) {
-      y = 96;
-      scale = 0.91;
+      x = raw < 0 ? -102 : 102;
+      scale = 0.94;
       zIndex = 20;
-      pointerEvents = "auto";
     } else {
-      y = 128;
-      scale = 0.88;
+      x = raw < 0 ? -136 : 136;
+      scale = 0.92;
       zIndex = 1;
-      pointerEvents = "none";
     }
 
-    /* Only position and scale animate. There is no opacity or blur animation. */
     card.style.transition = useAnimation
-      ? "transform 3.2s cubic-bezier(.18,.82,.22,1)"
+      ? "transform 700ms cubic-bezier(0.4, 0, 0.2, 1)"
       : "none";
 
     card.style.transform =
-      `translate3d(0, calc(-50% + ${y}px), 0) scale(${scale})`;
+      `translate3d(calc(-50% + ${x}px), -50%, 0) scale(${scale})`;
 
     card.style.opacity = "1";
     card.style.filter = "none";
+    card.style.zIndex = String(zIndex);
+    card.style.pointerEvents = pointerEvents;
 
-    card.style.zIndex =
-      String(zIndex);
+    const active = index === servicesCurrentIndex;
 
-    card.style.pointerEvents =
-      pointerEvents;
-
-    const active =
-      index === servicesCurrentIndex;
-
-    card.classList.toggle(
-      "active",
-      active
-    );
-
-    card.classList.toggle(
-      "behind",
-      !active
-    );
+    card.classList.toggle("active", active);
+    card.classList.toggle("behind", !active);
 
     card.setAttribute(
       "aria-hidden",
@@ -8530,14 +8579,9 @@ function updateServicesStack(animate = true) {
     servicesDots
       .querySelectorAll(".carousel-dot")
       .forEach((dot, index) => {
-        const active =
-          index === servicesCurrentIndex;
+        const active = index === servicesCurrentIndex;
 
-        dot.classList.toggle(
-          "active",
-          active
-        );
-
+        dot.classList.toggle("active", active);
         dot.setAttribute(
           "aria-current",
           active ? "true" : "false"
@@ -8545,12 +8589,7 @@ function updateServicesStack(animate = true) {
       });
   }
 
-  /*
-   * Measure after the browser has applied the natural card size.
-   */
-  requestAnimationFrame(
-    updateServicesViewportHeight
-  );
+  requestAnimationFrame(updateServicesViewportHeight);
 }
 
 /* ---------- Resize ---------- */
@@ -8585,47 +8624,102 @@ if (document.fonts?.ready) {
 async function loadServices() {
   if (!servicesContainer) return;
 
+  /*
+   * Keep the Services section from getting stuck on "Loading...".
+   * The CMS is still the first source; if Firebase/dynamic-content
+   * takes too long or returns no data, use the local service data.
+   */
+  const fallbackServices = [
+    {
+      title: "Photography",
+      description: [
+        "Professional Photoshoot/Portraits (Studio)",
+        "Fashion & Model",
+        "Corporate Events",
+        "Travel Photography",
+        "Products & Styling",
+        "Brands & Commercials"
+      ]
+    },
+    {
+      title: "Video Production",
+      description: [
+        "Corporate Videos",
+        "Event Coverage",
+        "Promotional Videos",
+        "Music Videos",
+        "Short Films",
+        "Post-Production"
+      ]
+    },
+    {
+      title: "Marketing & Branding",
+      description: [
+        "Brand Identity",
+        "Social Media Marketing",
+        "Campaign Design",
+        "Creative Strategy",
+        "Promotional Content"
+      ]
+    },
+    {
+      title: "Content Creation",
+      description: [
+        "Scripting Writing",
+        "Content Strategy",
+        "Concept Development"
+      ]
+    }
+  ];
+
+  const useFallback = reason => {
+    if (reason) {
+      console.warn(
+        "Services CMS unavailable; using local data:",
+        reason
+      );
+    }
+
+    servicesItems = fallbackServices;
+    servicesCurrentIndex = 0;
+    renderServicesStack();
+  };
+
   try {
-    const items =
-      await getCollection("filmmaking");
+    const timeout = new Promise(resolve => {
+      window.setTimeout(() => resolve(null), 3000);
+    });
 
-    servicesItems =
-      Array.isArray(items)
-        ? items
-        : [];
+    const cmsPromise = Promise.resolve()
+      .then(() => getCollection("filmmaking"));
 
-    if (!servicesItems.length) {
-      servicesContainer.innerHTML =
-        `<div class="no-content">No Services available yet.</div>`;
+    const items = await Promise.race([
+      cmsPromise,
+      timeout
+    ]);
 
-      if (servicesDots) {
-        servicesDots.innerHTML = "";
-      }
-
+    if (Array.isArray(items) && items.length) {
+      servicesItems = items;
+      servicesCurrentIndex = 0;
+      renderServicesStack();
       return;
     }
 
-    servicesCurrentIndex = 0;
-
-    renderServicesStack();
-  } catch (error) {
-    console.error(
-      "Services loading error:",
-      error
+    useFallback(
+      items === null
+        ? "CMS request timed out"
+        : "No service records returned"
     );
-
-    servicesContainer.innerHTML =
-      `<div class="no-content">Unable to load Services.</div>`;
-
-    if (servicesDots) {
-      servicesDots.innerHTML = "";
-    }
+  } catch (error) {
+    useFallback(error);
   }
 }
 
 /* ---------- Mouse wheel ---------- */
 
 if (servicesViewport) {
+  servicesViewport.style.touchAction = "pan-y";
+
   servicesViewport.addEventListener(
     "wheel",
     event => {
@@ -8733,7 +8827,7 @@ if (servicesViewport) {
   servicesViewport.addEventListener(
     "touchmove",
     event => {
-      if (!event.touches.length) return;
+      if (!event.touches.length || servicesAnimating) return;
 
       const dx =
         event.touches[0].clientX -
@@ -8751,6 +8845,49 @@ if (servicesViewport) {
       ) {
         servicesTouchMoved = true;
       }
+
+      /*
+       * Only horizontal gestures move the card.
+       * Vertical gestures remain available for scrolling.
+       */
+      if (
+        Math.abs(dx) <= Math.abs(dy) ||
+        Math.abs(dx) < 8
+      ) {
+        return;
+      }
+
+      const activeCard =
+        servicesContainer?.querySelector(
+          `.lh-service-stack-card[data-index="${servicesCurrentIndex}"]`
+        );
+
+      if (!activeCard) return;
+
+      let offset = dx;
+
+      /*
+       * Add resistance when trying to swipe beyond
+       * the first/last service.
+       */
+      const atFirst = servicesCurrentIndex === 0;
+      const atLast =
+        servicesCurrentIndex ===
+        servicesItems.length - 1;
+
+      if (
+        (atFirst && dx > 0) ||
+        (atLast && dx < 0)
+      ) {
+        offset = dx * 0.28;
+      }
+
+      servicesSwipeOffsetX = offset;
+
+      activeCard.style.transition = "none";
+
+      activeCard.style.transform =
+        `translate3d(calc(-50% + ${offset}px), -50%, 0) scale(1)`;
     },
     { passive: true }
   );
@@ -8779,17 +8916,21 @@ if (servicesViewport) {
           Math.abs(dy)
         );
 
+      const horizontal =
+        Math.abs(dx) > Math.abs(dy);
+
       if (
         !servicesTouchMoved ||
         distance < 60
       ) {
+        servicesSwipeOffsetX = 0;
+        updateServicesStack(true);
         return;
       }
 
       /*
-       * A vertical swipe that starts inside a scrollable
-       * service description should scroll the list instead
-       * of changing services.
+       * Preserve vertical scrolling inside the service
+       * description list.
        */
       const scrollArea =
         servicesTouchStartTarget?.closest?.(
@@ -8798,44 +8939,121 @@ if (servicesViewport) {
 
       if (
         scrollArea &&
-        Math.abs(dy) > Math.abs(dx) &&
+        !horizontal &&
         scrollArea.scrollHeight >
           scrollArea.clientHeight
       ) {
-        const atTop =
-          scrollArea.scrollTop <= 0;
-
-        const atBottom =
-          scrollArea.scrollTop +
-            scrollArea.clientHeight >=
-          scrollArea.scrollHeight - 1;
-
-        const movingUp = dy < 0;
-        const movingDown = dy > 0;
-
-        if (
-          (movingUp && !atBottom) ||
-          (movingDown && !atTop)
-        ) {
-          return;
-        }
+        servicesSwipeOffsetX = 0;
+        updateServicesStack(true);
+        return;
       }
 
-      if (
-        Math.abs(dx) >
-        Math.abs(dy)
-      ) {
+      if (horizontal) {
+        /*
+         * Swipe left  -> next service.
+         * Swipe right -> previous service.
+         */
+        const swipeOffset = servicesSwipeOffsetX;
+        servicesSwipeOffsetX = 0;
+
         changeService(
-          dx < 0 ? 1 : -1
+          dx < 0 ? 1 : -1,
+          swipeOffset
         );
       } else {
-        changeService(
-          dy < 0 ? 1 : -1
-        );
+        servicesSwipeOffsetX = 0;
+        updateServicesStack(true);
       }
     },
     { passive: true }
   );
+}
+
+/* ---------- Desktop mouse drag ---------- */
+
+if (servicesViewport) {
+  let servicesMouseDown = false;
+  let servicesMouseStartX = 0;
+  let servicesMouseOffsetX = 0;
+
+  servicesViewport.addEventListener("pointerdown", event => {
+    if (event.pointerType !== "mouse" || servicesAnimating) return;
+
+    servicesMouseDown = true;
+    servicesMouseStartX = event.clientX;
+    servicesMouseOffsetX = 0;
+
+    servicesViewport.setPointerCapture?.(event.pointerId);
+
+    const activeCard = servicesContainer?.querySelector(
+      `.lh-service-stack-card[data-index="${servicesCurrentIndex}"]`
+    );
+
+    if (activeCard) {
+      activeCard.style.transition = "none";
+    }
+  });
+
+  servicesViewport.addEventListener("pointermove", event => {
+    if (
+      event.pointerType !== "mouse" ||
+      !servicesMouseDown ||
+      servicesAnimating
+    ) {
+      return;
+    }
+
+    const activeCard = servicesContainer?.querySelector(
+      `.lh-service-stack-card[data-index="${servicesCurrentIndex}"]`
+    );
+
+    if (!activeCard) return;
+
+    let offset = event.clientX - servicesMouseStartX;
+
+    const atFirst = servicesCurrentIndex === 0;
+    const atLast = servicesCurrentIndex === servicesItems.length - 1;
+
+    if (
+      (atFirst && offset > 0) ||
+      (atLast && offset < 0)
+    ) {
+      offset *= 0.28;
+    }
+
+    servicesMouseOffsetX = offset;
+
+    activeCard.style.transition = "none";
+    activeCard.style.transform =
+      `translate3d(calc(-50% + ${offset}px), -50%, 0) scale(1)`;
+  });
+
+  const finishMouseDrag = event => {
+    if (event.pointerType !== "mouse" || !servicesMouseDown) return;
+
+    servicesMouseDown = false;
+
+    const offset = servicesMouseOffsetX;
+    servicesMouseOffsetX = 0;
+
+    const activeCard = servicesContainer?.querySelector(
+      `.lh-service-stack-card[data-index="${servicesCurrentIndex}"]`
+    );
+
+    if (Math.abs(offset) < 60) {
+      servicesSwipeOffsetX = 0;
+      updateServicesStack(true);
+      return;
+    }
+
+    changeService(
+      offset < 0 ? 1 : -1,
+      offset
+    );
+  };
+
+  servicesViewport.addEventListener("pointerup", finishMouseDrag);
+  servicesViewport.addEventListener("pointercancel", finishMouseDrag);
 }
 
 /* ---------- Keyboard ---------- */
@@ -8846,12 +9064,17 @@ document.addEventListener(
     const section =
       document.getElementById("services");
 
-    if (
-      !section ||
-      !section.classList.contains("in-view")
-    ) {
-      return;
-    }
+    if (!section) return;
+
+    // Do not depend on the animation-only `in-view` class.
+    // Keyboard navigation should work whenever the Services section
+    // is actually visible on screen.
+    const rect = section.getBoundingClientRect();
+    const sectionVisible =
+      rect.bottom > 0 &&
+      rect.top < window.innerHeight;
+
+    if (!sectionVisible) return;
 
     const target =
       event.target;
@@ -11496,7 +11719,7 @@ nav::after {
    * Opacity and blur are intentionally NOT transitioned.
    */
   transition:
-    transform .56s cubic-bezier(.16,1,.3,1);
+    transform 5s cubic-bezier(.16,1,.3,1);
 }
 
 #services #integrated-services .lh-service-stack-card::before {
@@ -12866,4 +13089,68 @@ nav::after {
     top: calc(50% + 160px);
   }
 }
+
+/* ==========================================================
+   SERVICES — STRAIGHT HORIZONTAL CARD DECK
+   ========================================================== */
+
+#services #integrated-services .carousel-viewport {
+  overflow: hidden;
+  position: relative;
+  touch-action: pan-y;
+}
+
+#services #integrated-services #servicesContent {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+#services #integrated-services .lh-service-stack-card {
+  left: 50%;
+  right: auto;
+  margin: 0;
+  top: 50%;
+  transform-origin: center center;
+  overflow: hidden;
+  will-change: transform;
+}
+
+#services #integrated-services .lh-service-stack-card.services-swipe-out-left {
+  animation: servicesSwipeOutLeft 1.2s cubic-bezier(.16,1,.3,1) forwards;
+  z-index: 100;
+  pointer-events: none;
+}
+
+#services #integrated-services .lh-service-stack-card.services-swipe-out-right {
+  animation: servicesSwipeOutRight 1.2s cubic-bezier(.16,1,.3,1) forwards;
+  z-index: 100;
+  pointer-events: none;
+}
+
+@keyframes servicesSwipeOutLeft {
+  from {
+    transform: translate3d(-50%, -50%, 0) scale(1);
+  }
+  to {
+    transform: translate3d(calc(-50% - 115vw), -50%, 0) scale(.98);
+  }
+}
+
+@keyframes servicesSwipeOutRight {
+  from {
+    transform: translate3d(-50%, -50%, 0) scale(1);
+  }
+  to {
+    transform: translate3d(calc(-50% + 115vw), -50%, 0) scale(.98);
+  }
+}
+
+@media (max-width: 768px) {
+  #services #integrated-services .lh-service-stack-card {
+    width: calc(100vw - 48px);
+  }
+}
+
 </style>
