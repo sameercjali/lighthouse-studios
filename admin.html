@@ -2424,7 +2424,7 @@
   <input
     id="backgroundVideoMobile"
     value="${esc(
-      data.backgroundVideoMobile ||
+      data.mobileBackgroundVideo ||
       ""
     )}"
     placeholder="Cloudinary mobile video URL"
@@ -2550,7 +2550,7 @@ $("backgroundVideoFile").addEventListener(
 
         /* Existing video URLs */
         let backgroundVideo = $("backgroundVideo").value.trim();
-        let backgroundVideoMobile = $("backgroundVideoMobile").value.trim();
+        let mobileBackgroundVideo = $("backgroundVideoMobile").value.trim();
 
         const allowedVideoTypes = ["video/mp4", "video/webm", "video/ogg"];
 
@@ -2592,8 +2592,8 @@ $("backgroundVideoFile").addEventListener(
 
         if (mobileVideoFile) {
           $("saveStatus").textContent = "Uploading mobile background video...";
-          backgroundVideoMobile = await uploadBackgroundVideo(mobileVideoFile, "Mobile background video");
-          $("backgroundVideoMobile").value = backgroundVideoMobile;
+          mobileBackgroundVideo = await uploadBackgroundVideo(mobileVideoFile, "Mobile background video");
+          $("backgroundVideoMobile").value = mobileBackgroundVideo;
         }
 
         if (videoFile || mobileVideoFile) {
@@ -2647,7 +2647,7 @@ $("backgroundVideoFile").addEventListener(
 
             backgroundVideo,
 
-            backgroundVideoMobile,
+            mobileBackgroundVideo,
 
             updatedAt:
               serverTimestamp()
